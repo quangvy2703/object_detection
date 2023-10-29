@@ -1,0 +1,10 @@
+*.log
+.idea
+.DS_Store
+
+logs
+datasets
+test*.py
+convert_data.py
+*.pt
+__pycache__/
