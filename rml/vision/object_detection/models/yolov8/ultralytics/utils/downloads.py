@@ -15,7 +15,7 @@ import torch
 from rml.vision.object_detection.models.yolov8.ultralytics.utils import LOGGER, TQDM, checks, clean_url, emojis, is_online, url2file
 
 # Define rml.vision.object_detection.models.yolov8.ultralytics GitHub assets maintained at https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/assets
-GITHUB_ASSETS_REPO = 'rml.vision.object_detection.models.yolov8.ultralytics/assets'
+GITHUB_ASSETS_REPO = 'ultralytics/assets'
 GITHUB_ASSETS_NAMES = [f'yolov8{k}{suffix}.pt' for k in 'nsmlx' for suffix in ('', '-cls', '-seg', '-pose')] + \
                       [f'yolov5{k}{resolution}u.pt' for k in 'nsmlx' for resolution in ('', '6')] + \
                       [f'yolov3{k}u.pt' for k in ('', '-spp', '-tiny')] + \
@@ -164,7 +164,7 @@ def unzip_file(file, path=None, exclude=('.DS_Store', '__MACOSX'), exist_ok=Fals
     return path  # return unzip dir
 
 
-def check_disk_space(url='https://rml.vision.object_detection.models.yolov8.ultralytics.com/assets/coco128.zip', sf=1.5, hard=True):
+def check_disk_space(url='https://ultralytics.com/assets/coco128.zip', sf=1.5, hard=True):
     """
     Check if there is sufficient disk space to download and store a file.
 
@@ -325,7 +325,7 @@ def safe_download(url,
         return unzip_dir
 
 
-def get_github_assets(repo='rml.vision.object_detection.models.yolov8.ultralytics/assets', version='latest', retry=False):
+def get_github_assets(repo='ultralytics/assets', version='latest', retry=False):
     """Return GitHub repo tag and assets (i.e. ['yolov8n.pt', 'yolov8s.pt', ...])."""
     if version != 'latest':
         version = f'tags/{version}'  # i.e. tags/v6.2
@@ -340,7 +340,7 @@ def get_github_assets(repo='rml.vision.object_detection.models.yolov8.ultralytic
     return data['tag_name'], [x['name'] for x in data['assets']]  # tag, assets
 
 
-def attempt_download_asset(file, repo='rml.vision.object_detection.models.yolov8.ultralytics/assets', release='v0.0.0'):
+def attempt_download_asset(file, repo='ultralytics/assets', release='v0.0.0'):
     """
     Attempt file download from GitHub release assets if not found locally.
 
