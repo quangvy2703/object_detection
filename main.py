@@ -24,6 +24,10 @@ def main(args):
     print("Dir info")
     if os.path.exists("/opt/ml"):
         print(f"Debug info: /opt/ml ", os.listdir("/opt/ml"))
+    if os.path.exists("/opt/ml/input"):
+        print(f"Debug info: /opt/ml/input ", os.listdir("/opt/ml/input"))
+    if os.path.exists("/opt/ml/input/train"):
+        print(f"Debug info: /opt/ml/input ", os.listdir("/opt/ml/input/train"))
     if os.path.exists("/opt/ml/datasets"):
         print(f"Debug info: /opt/ml/datasets ", os.listdir("/opt/ml/datasets"))
     if os.path.exists("/opt/ml/datasets/rever"):
