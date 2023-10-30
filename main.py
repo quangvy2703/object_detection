@@ -28,12 +28,9 @@ def main(args):
         print(f"Debug info: /opt/ml/input ", os.listdir("/opt/ml/input"))
     if os.path.exists("/opt/ml/input/data"):
         print(f"Debug info: /opt/ml/input/data ", os.listdir("/opt/ml/input/data"))
-    if os.path.exists("/opt/ml/input/train"):
-        print(f"Debug info: /opt/ml/input/train ", os.listdir("/opt/ml/input/train"))
-    if os.path.exists("/opt/ml/datasets"):
-        print(f"Debug info: /opt/ml/datasets ", os.listdir("/opt/ml/datasets"))
-    if os.path.exists("/opt/ml/datasets/rever"):
-        print(f"Debug info: /opt/ml/datasets/rever ", os.listdir("/opt/ml/datasets/rever"))
+    if os.path.exists("/opt/ml/input/data/train"):
+        print(f"Debug info: /opt/ml/input/data/train", os.listdir("/opt/ml/input/data/train"))
+
 
     model_loader.train(
         training_data_config_paths=args.training_data_config_paths,
