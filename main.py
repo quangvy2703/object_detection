@@ -68,7 +68,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--project",
         type=str,
-        default=10,
+        # default="furniture-detection",
         metavar="N",
         help="",
     )
@@ -104,6 +104,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--save_dir",
         type=str,
+        default="run/train",
         metavar="N",
         help="output directory",
     )

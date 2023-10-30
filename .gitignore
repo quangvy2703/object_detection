@@ -6,5 +6,5 @@ logs
 datasets
 test*.py
 convert_data.py
-#*.pt
+*.pt
 __pycache__/
