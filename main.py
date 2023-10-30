@@ -1,4 +1,5 @@
 import argparse
+import os
 import json
 
 from rml.model_loader.yolo_model_loader import YOLOv8ModelLoader
@@ -19,6 +20,12 @@ def main(args):
     )
 
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
+    if os.path.exists("/opt/ml"):
+        print(f"Debug info: /opt/ml ", os.listdir("/opt/ml"))
+    if os.path.exists("/opt/ml/datasets"):
+        print(f"Debug info: /opt/ml/datasets ", os.listdir("/opt/ml/datasets"))
+    if os.path.exists("/opt/ml/datasets/rever"):
+        print(f"Debug info: /opt/ml/datasets/rever ", os.listdir("/opt/ml/datasets/rever"))
     model_loader.train(
         training_data_config_paths=args.training_data_config_paths,
         train_configs=train_configs
