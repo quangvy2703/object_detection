@@ -64,7 +64,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--project",
         type=str,
-        default="/Users/phamvy/Projects/source/RML/rml/furniture-detection",
+        default="furniture-detection",
         metavar="N",
         help="",
     )
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--remote_save_dir",
         type=str,
-        default="/Users/phamvy/Projects/source/RML/rml",
+        default="remote_save_dir",
         metavar="N",
         help="output directory",
     )
