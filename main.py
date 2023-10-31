@@ -105,6 +105,14 @@ if __name__ == "__main__":
         help="output directory",
     )
 
+    parser.add_argument(
+        "--remote_save_dir",
+        type=str,
+        default="/Users/phamvy/Projects/source/RML/rml",
+        metavar="N",
+        help="output directory",
+    )
+
     main(parser.parse_args())
 
     # detected = model_loader.inference(
