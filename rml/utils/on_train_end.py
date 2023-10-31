@@ -1,11 +1,15 @@
 import os
 import json
+import shutil
+
 import pandas as pd
 import pathlib
 
 
 class OnTrainEnd:
     RESULT_FILE = "results.csv"
+    RESULT_FILE_IMG = "results.png"
+    MODEL_FILE = "best.pt"
 
     def __init__(
             self,
@@ -32,9 +36,17 @@ class OnTrainEnd:
                 "recall": recall,
                 "map": map,
             },
-            open(os.path.join(remote_saved_dir, "last_model", "metrics.json"), "w")
+            open(os.path.join(remote_saved_dir, "best_model", "metrics.json"), "w")
         )
 
+        shutil.copy(
+            os.path.join(local_saved_dir, "train", OnTrainEnd.RESULT_FILE_IMG),
+            os.path.join(remote_saved_dir, "best_model", OnTrainEnd.RESULT_FILE_IMG)
+        )
+        shutil.copy(
+            os.path.join(local_saved_dir, "train", "weights", OnTrainEnd.MODEL_FILE),
+            os.path.join(remote_saved_dir, "best_model", OnTrainEnd.MODEL_FILE)
+        )
 
 
 
