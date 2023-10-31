@@ -18,19 +18,7 @@ def main(args):
         data_config_files=args.training_data_config_paths,
         paths=args.data_dirs
     )
-
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
-
-    print("Dir info")
-    if os.path.exists("/opt/ml"):
-        print(f"Debug info: /opt/ml ", os.listdir("/opt/ml"))
-    if os.path.exists("/opt/ml/input"):
-        print(f"Debug info: /opt/ml/input ", os.listdir("/opt/ml/input"))
-    if os.path.exists("/opt/ml/input/data"):
-        print(f"Debug info: /opt/ml/input/data ", os.listdir("/opt/ml/input/data"))
-    if os.path.exists("/opt/ml/input/data/train"):
-        print(f"Debug info: /opt/ml/input/data/train", os.listdir("/opt/ml/input/data/train"))
-
 
     model_loader.train(
         training_data_config_paths=args.training_data_config_paths,
@@ -68,7 +56,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--project",
         type=str,
-        # default="furniture-detection",
+        default="/Users/phamvy/Projects/source/RML/rml/furniture-detection",
         metavar="N",
         help="",
     )
@@ -104,7 +92,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="run/train",
+        default="/Users/phamvy/Projects/source/RML/rml",
         metavar="N",
         help="output directory",
     )

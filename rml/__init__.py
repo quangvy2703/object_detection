@@ -11,19 +11,18 @@ rever-sagemaker
                         instance_count: int = 1,
                         instance_type: str = "ml.g4dn.xlarge",
                     training_data_info:
-                        source: str
                         data_dir: str
-                        num_samples: int
+                        num_train_samples: int
+                        num_valid_samples: int
                         num_classes: int
                 model-checkpoint.pt
-                validation-score.json
+                validation-scores.json
                     ap: float
                     precision: float
                     recall: float
             last-model-dir
                 training-info.json
                 model-checkpoint.pt
-                validation-score.json
-
+                validation-score.jsons
 """
 
