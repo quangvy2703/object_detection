@@ -22,15 +22,15 @@ def main(args):
     )
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
 
-    model_loader.train(
-        training_data_config_paths=args.training_data_config_paths,
-        train_configs=train_configs
-    )
+    # model_loader.train(
+    #     training_data_config_paths=args.training_data_config_paths,
+    #     train_configs=train_configs
+    # )
 
-    if "remote_saved_dir" in args:
+    if hasattr(args, "remote_save_dir"):
         OnTrainEnd(
             local_saved_dir=train_configs["project"],
-            remote_saved_dir=args["remote_saved_dir"]
+            remote_saved_dir=args.remote_save_dir
         ).on_train_end()
 
 

@@ -20,7 +20,7 @@ class OnTrainEnd:
 
     def _prepare_remote_data(self, local_saved_dir: str, remote_saved_dir: str):
         pathlib.Path(os.path.join(remote_saved_dir, "best_model")).mkdir(parents=True, exist_ok=True)
-        pathlib.Path(os.path.join(remote_saved_dir, "last_model")).mkdir(parents=True, exist_ok=True)
+        # pathlib.Path(os.path.join(remote_saved_dir, "last_model")).mkdir(parents=True, exist_ok=True)
 
         results = pd.read_csv(os.path.join(local_saved_dir, OnTrainEnd.RESULT_FILE))
         precision = results.iloc[0].values[4]

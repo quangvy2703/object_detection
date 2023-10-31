@@ -7,4 +7,5 @@ datasets
 test*.py
 convert_data.py
 *.pt
+s3.py
 __pycache__/
