@@ -3,10 +3,12 @@ import os
 import json
 
 from rml.model_loader.yolo_model_loader import YOLOv8ModelLoader
+from rml.utils.on_train_end import OnTrainEnd
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 
 def main(args):
+
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path='rml/data/models/yolov8n.pt'
     )
@@ -24,6 +26,12 @@ def main(args):
         training_data_config_paths=args.training_data_config_paths,
         train_configs=train_configs
     )
+
+    if "remote_saved_dir" in args:
+        OnTrainEnd(
+            local_saved_dir=train_configs["project"],
+            remote_saved_dir=args["remote_saved_dir"]
+        ).on_train_end()
 
 
 if __name__ == "__main__":
