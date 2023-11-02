@@ -557,6 +557,7 @@ class BaseTrainer:
         # with open(self.csv, 'a') as f:
         #     f.write(s + ('%23.5g,' * n % tuple([self.epoch + 1] + vals)).rstrip(',') + '\n')
 
+        print(metrics)
         saved_metrics = dict(zip(
             [metric for metric in self.args.metrics],
             [metrics[metric] for metric in self.args.metrics],
