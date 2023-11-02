@@ -147,7 +147,6 @@ def get_cfg(cfg: Union[str, Path, Dict, SimpleNamespace] = DEFAULT_CFG_DICT, ove
 
 def get_save_dir(args, name=None):
     """Return save_dir as created from train/val/predict arguments."""
-
     if getattr(args, 'save_dir', None):
         save_dir = args.save_dir
     else:

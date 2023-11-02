@@ -5,7 +5,8 @@ Train a model on a dataset.
 Usage:
     $ yolo mode=train model=yolov8n.pt data=coco128.yaml imgsz=640 epochs=100 batch=16
 """
-
+import copy
+import json
 import math
 import os
 import subprocess
@@ -33,7 +34,7 @@ from rml.vision.object_detection.models.yolov8.ultralytics.utils.dist import ddp
 from rml.vision.object_detection.models.yolov8.ultralytics.utils.files import get_latest_run
 from rml.vision.object_detection.models.yolov8.ultralytics.utils.torch_utils import (EarlyStopping, ModelEMA, de_parallel, init_seeds, one_cycle, select_device,
                                            strip_optimizer)
-
+from rml.utils.on_train_end import OnTrainEnd
 
 class BaseTrainer:
     """
@@ -423,7 +424,7 @@ class BaseTrainer:
             # Do final val with best.pt
             LOGGER.info(f'\n{epoch - self.start_epoch + 1} epochs completed in '
                         f'{(time.time() - self.train_time_start) / 3600:.3f} hours.')
-            self.final_eval()
+            metrics = self.final_eval()
             if self.args.plots:
                 self.plot_metrics()
             self.run_callbacks('on_train_end')
@@ -550,11 +551,19 @@ class BaseTrainer:
 
     def save_metrics(self, metrics):
         """Saves training metrics to a CSV file."""
-        keys, vals = list(metrics.keys()), list(metrics.values())
-        n = len(metrics) + 1  # number of cols
-        s = '' if self.csv.exists() else (('%23s,' * n % tuple(['epoch'] + keys)).rstrip(',') + '\n')  # header
-        with open(self.csv, 'a') as f:
-            f.write(s + ('%23.5g,' * n % tuple([self.epoch + 1] + vals)).rstrip(',') + '\n')
+        # keys, vals = list(metrics.keys()), list(metrics.values())
+        # n = len(metrics) + 1  # number of cols
+        # s = '' if self.csv.exists() else (('%23s,' * n % tuple(['epoch'] + keys)).rstrip(',') + '\n')  # header
+        # with open(self.csv, 'a') as f:
+        #     f.write(s + ('%23.5g,' * n % tuple([self.epoch + 1] + vals)).rstrip(',') + '\n')
+
+        saved_metrics = dict(zip(
+            [metric for metric in self.args.metrics],
+            [metrics[metric] for metric in self.args.metrics],
+        ))
+
+        with open(os.path.join(self.save_dir, "metrics.json")) as f:
+            json.dump(saved_metrics, f)
 
     def plot_metrics(self):
         """Plot and display metrics visually."""
@@ -567,6 +576,7 @@ class BaseTrainer:
 
     def final_eval(self):
         """Performs final evaluation and validation for object detection YOLO model."""
+        metrics = []
         for f in self.last, self.best:
             if f.exists():
                 strip_optimizer(f)  # strip optimizers
@@ -576,6 +586,9 @@ class BaseTrainer:
                     self.metrics = self.validator(model=f)
                     self.metrics.pop('fitness', None)
                     self.run_callbacks('on_fit_epoch_end')
+                    metrics.append(copy.deepcopy(self.metrics))
+
+        return dict(zip(["last", "best"], metrics))
 
     def check_resume(self, overrides):
         """Check if resume checkpoint exists and update arguments accordingly."""
