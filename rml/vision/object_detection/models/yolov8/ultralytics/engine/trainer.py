@@ -447,12 +447,12 @@ class BaseTrainer:
     def format_output_dir(self):
         os.mkdir(os.path.join(self.save_dir, "plot_scores"))
 
-        debug_images = [f for f in os.listdir() if ('train' in f.lower() or 'val' in f.lower())]
+        debug_images = [f for f in os.listdir(self.save_dir) if ('train' in f.lower() or 'val' in f.lower())]
         print(debug_images)
         for debug_image in debug_images:
             os.remove(os.path.join(self.save_dir, debug_image))
 
-        score_images = [f for f in os.listdir() if ('.png' in f.lower() or '.jpg' in f.lower())]
+        score_images = [f for f in os.listdir(self.save_dir) if ('.png' in f.lower() or '.jpg' in f.lower())]
         print(score_images)
         for score_image in score_images:
             shutil.move(
