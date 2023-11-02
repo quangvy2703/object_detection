@@ -43,9 +43,9 @@ from rml.utils.on_train_end import OnTrainEnd
 
 class BaseTrainer:
     METRIC_MAPPING = {
-        "metrics/precision(B)": "precision",
-        "metrics/recall(B)": "recall",
-        "metrics/mAP50(B)": "average_precision"
+        "precision": "metrics/precision(B)",
+        "recall": "metrics/recall(B)",
+        "average_precision": "metrics/mAP50(B)"
     }
     """
     BaseTrainer.
