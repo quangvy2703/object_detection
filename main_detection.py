@@ -106,11 +106,11 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--remote_save_dir",
+        "--metrics",
         type=str,
-        default="remote_save_dir",
+        default="precision, recall, average_precision",
         metavar="N",
-        help="output directory",
+        help="using metrics",
     )
 
     main(parser.parse_args())
