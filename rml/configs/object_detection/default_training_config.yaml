@@ -4,7 +4,7 @@
 
 epochs: 100  # (int) number of epochs to train for
 patience: 50  # (int) epochs to wait for no observable improvement for early stopping of training
-batch: 16  # (int) number of images per batch (-1 for AutoBatch)
+batch: -1  # (int) number of images per batch (-1 for AutoBatch)
 imgsz: 640  # (int | list) input images size as int for train and val modes, or list[w,h] for predict and export modes
 save: True  # (bool) save train checkpoints and predict results
 save_period: -1 # (int) Save checkpoint every x epochs (disabled if < 1)
@@ -28,7 +28,7 @@ amp: True  # (bool) Automatic Mixed Precision (AMP) training, choices=[True, Fal
 fraction: 1.0  # (float) dataset fraction to train on (default is 1.0, all images in train set)
 profile: False  # (bool) profile ONNX and TensorRT speeds during training for loggers
 freeze: None  # (int | list, optional) freeze first n layers, or freeze list of layer indices during training
-save_dir: trained_models
+save_dir:
 # Segmentation
 overlap_mask: True  # (bool) masks should overlap during training (segment train only)
 mask_ratio: 4  # (int) mask downsample ratio (segment train only)
@@ -46,7 +46,7 @@ iou: 0.7  # (float) intersection over union (IoU) threshold for NMS
 max_det: 300  # (int) maximum number of detections per image
 half: False  # (bool) use half precision (FP16)
 dnn: False  # (bool) use OpenCV DNN for ONNX inference
-plots: False  # (bool) save plots during train/val
+plots: True  # (bool) save plots during train/val
 
 # Prediction settings --------------------------------------------------------------------------------------------------
 source:  # (str, optional) source directory for images or videos
