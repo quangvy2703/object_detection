@@ -27,6 +27,8 @@ class YOLOv8ModelLoader(ModelLoader):
             logging.warning(f"Training config file {train_config_path} is not found")
             return {}
 
+
+
     @staticmethod
     def merge_configs(config_a: dict, config_b: dict) -> dict:
         for config in config_a.keys():

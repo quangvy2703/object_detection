@@ -8,22 +8,20 @@ from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 
 def main(args):
-
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path='rml/data/models/yolov8n.pt'
     )
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
+    print(train_configs)
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
     args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
-
+    args.metrics = [item.strip() for item in args.metrics.split(',')]
 
     YOLOv8ModelLoader.update_data_config_file(
         data_config_files=args.training_data_config_paths,
         paths=args.data_dirs
     )
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
-    train_configs.metrics = [item.strip() for item in args.metrics.split(',')]
-    print("train_configs ", train_configs)
     model_loader.train(
         training_data_config_paths=args.training_data_config_paths,
         train_configs=train_configs
