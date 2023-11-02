@@ -110,7 +110,7 @@ names:
   52: Air conditioner
   53: Microwave
   54: Oven
-path: /content/rever
+path: /Users/phamvy/Projects/dataset/rever_furniture_dataset
 test: null
 train: images/train
 val: images/valid

@@ -26,17 +26,27 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from rml.vision.object_detection.models.yolov8.ultralytics.cfg import get_cfg, get_save_dir
 from rml.vision.object_detection.models.yolov8.ultralytics.data.utils import check_cls_dataset, check_det_dataset
 from rml.vision.object_detection.models.yolov8.ultralytics.nn.tasks import attempt_load_one_weight, attempt_load_weights
-from rml.vision.object_detection.models.yolov8.ultralytics.utils import (DEFAULT_CFG, LOGGER, RANK, TQDM, __version__, callbacks, clean_url, colorstr, emojis,
-                               yaml_save)
+from rml.vision.object_detection.models.yolov8.ultralytics.utils import (DEFAULT_CFG, LOGGER, RANK, TQDM, __version__,
+                                                                         callbacks, clean_url, colorstr, emojis,
+                                                                         yaml_save)
 from rml.vision.object_detection.models.yolov8.ultralytics.utils.autobatch import check_train_batch_size
-from rml.vision.object_detection.models.yolov8.ultralytics.utils.checks import check_amp, check_file, check_imgsz, print_args
+from rml.vision.object_detection.models.yolov8.ultralytics.utils.checks import check_amp, check_file, check_imgsz, \
+    print_args
 from rml.vision.object_detection.models.yolov8.ultralytics.utils.dist import ddp_cleanup, generate_ddp_command
 from rml.vision.object_detection.models.yolov8.ultralytics.utils.files import get_latest_run
-from rml.vision.object_detection.models.yolov8.ultralytics.utils.torch_utils import (EarlyStopping, ModelEMA, de_parallel, init_seeds, one_cycle, select_device,
-                                           strip_optimizer)
+from rml.vision.object_detection.models.yolov8.ultralytics.utils.torch_utils import (EarlyStopping, ModelEMA,
+                                                                                     de_parallel, init_seeds, one_cycle,
+                                                                                     select_device,
+                                                                                     strip_optimizer)
 from rml.utils.on_train_end import OnTrainEnd
 
+
 class BaseTrainer:
+    METRIC_MAPPING = {
+        "metrics/precision(B)": "precision",
+        "metrics/recall(B)": "recall",
+        "metrics/mAP50(B)": "average_precision"
+    }
     """
     BaseTrainer.
 
@@ -557,10 +567,9 @@ class BaseTrainer:
         # with open(self.csv, 'a') as f:
         #     f.write(s + ('%23.5g,' * n % tuple([self.epoch + 1] + vals)).rstrip(',') + '\n')
 
-        print(metrics)
         saved_metrics = dict(zip(
             [metric for metric in self.args.metrics],
-            [metrics[metric] for metric in self.args.metrics],
+            [metrics[BaseTrainer.METRIC_MAPPING[metric]] for metric in self.args.metrics],
         ))
 
         with open(os.path.join(self.save_dir, "metrics.json")) as f:
