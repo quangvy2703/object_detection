@@ -19,6 +19,7 @@ def encode_url(url: str):
     url = urlunparse(new_url_parse)
     return url
 
+
 def _read_from_local(path: str) -> Tuple[str, ndarray]:
     return path, cv2.imread(path)
 

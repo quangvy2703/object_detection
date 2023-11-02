@@ -6,16 +6,13 @@ import yaml
 import shutil
 from tqdm import tqdm
 
+from rml.data_converter.base import DatasetConverter
 from rml.utils.dataset_utils import load_open_image_metadata
 
 from rml.domain.label import OIBox, COCOBox
 
 
-class DatasetConverter:
-    pass
-
-
-class CocoaDatasetConverter:
+class CocoaDatasetConverter(DatasetConverter):
     def __init__(
             self,
             converted_dir: str,

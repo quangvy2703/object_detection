@@ -7,16 +7,10 @@ from rml.vision.object_detection.models.yolov8.ultralytics import YOLO
 
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
-
-class ModelLoader:
-    def train(self, data_config_path: str, train_config_path: str):
-        pass
-
-    def inference(self, inference_input: ObjectDetectionInferenceInput):
-        pass
+from rml.model_loader.base import ModelLoader
 
 
-class YOLOv8ModelLoader:
+class YOLOv8ModelLoader(ModelLoader):
     @staticmethod
     def from_pretrained(model_path: str):
         return YOLOv8ModelLoader(
@@ -41,18 +35,18 @@ class YOLOv8ModelLoader:
 
     @staticmethod
     def update_data_config_file(
-        data_config_files: List[str],
-        paths: List[str] = None,
-        # trains: List[str] = None,
-        # vals: List[str] = None,
-        # tests: List[str] = None
-    ):
-        def check_valid_update(
             data_config_files: List[str],
             paths: List[str] = None,
             # trains: List[str] = None,
             # vals: List[str] = None,
             # tests: List[str] = None
+    ):
+        def check_valid_update(
+                data_config_files: List[str],
+                paths: List[str] = None,
+                # trains: List[str] = None,
+                # vals: List[str] = None,
+                # tests: List[str] = None
         ):
             num_data_config_files = len(data_config_files)
             if num_data_config_files > 1:
