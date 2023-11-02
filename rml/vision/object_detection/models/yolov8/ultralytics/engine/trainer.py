@@ -572,7 +572,7 @@ class BaseTrainer:
             [metrics[BaseTrainer.METRIC_MAPPING[metric]] for metric in self.args.metrics],
         ))
 
-        with open(os.path.join(self.save_dir, "metrics.json")) as f:
+        with open(os.path.join(self.save_dir, "metrics.json"), "w") as f:
             json.dump(saved_metrics, f)
 
     def plot_metrics(self):
