@@ -9,9 +9,11 @@ import copy
 import json
 import math
 import os
+import shutil
 import subprocess
 import time
 import warnings
+import shutil
 from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -440,6 +442,18 @@ class BaseTrainer:
             self.run_callbacks('on_train_end')
         torch.cuda.empty_cache()
         self.run_callbacks('teardown')
+
+    def format_output_dir(self):
+        os.mkdir(os.path.join(self.save_dir, "plot_scores"))
+        score_images = [f for f in os.listdir() if '.png' in f.lower()]
+        for score_image in score_images:
+            shutil.move(
+                os.path.join(self.save_dir, score_image),
+                os.path.join(self.save_dir, "plot_scores", score_image)
+            )
+        debug_images = [f for f in os.listdir() if '.jpg' in f.lower()]
+        for debug_image in debug_images:
+            os.remove(os.path.join(self.save_dir, debug_image))
 
     def save_model(self):
         """Save model training checkpoints with additional metadata."""
