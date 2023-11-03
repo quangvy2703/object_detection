@@ -19,7 +19,7 @@ def main(args):
 
     YOLOv8ModelLoader.update_data_config_file(
         data_config_files=args.training_data_config_paths,
-        paths=args.data_dirs
+        data_dirs=args.data_dirs
     )
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
     model_loader.train(

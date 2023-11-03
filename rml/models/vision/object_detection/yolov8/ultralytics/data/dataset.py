@@ -35,16 +35,13 @@ class YOLODataset(BaseDataset):
         (torch.utils.data.Dataset): A PyTorch dataset object that can be used for training an object detection model.
     """
 
-    def __init__(self, *args, data=None, use_segments=False, use_keypoints=False, **kwargs):
+    def __init__(self, *args, data=None, use_segments=False, use_keypoints=False, using_mapping=False, **kwargs):
         """Initializes the YOLODataset with optional configurations for segments and keypoints."""
         self.use_segments = use_segments
         self.use_keypoints = use_keypoints
         self.data = data
-        if len(self.data) > 1:
-            self.num_classes = len(self.data[0]["classes"])
-            # self.data = self.data[1:]
-        else:
-            self.num_classes = len(self.data[0]["names"])
+
+        self.num_classes = len(self.data[0]["mapping_names"]) if using_mapping else len(self.data[0]["names"])
 
         assert not (self.use_segments and self.use_keypoints), 'Can not use both segments and keypoints.'
         super().__init__(*args, **kwargs)
@@ -63,7 +60,7 @@ class YOLODataset(BaseDataset):
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
         desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
         total = len(self.im_files)
-        for _data in self.data[1:] if len(self.data) > 1 else self.data:
+        for _data in self.data:
             nkpt, ndim = _data.get('kpt_shape', (0, 0))
             label_id_mapping = _data.get('mapping_to_default', None)
             if self.use_keypoints and (nkpt <= 0 or ndim not in (2, 3)):

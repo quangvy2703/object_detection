@@ -288,7 +288,7 @@ def check_det_dataset(datasets, autodownload=True):
         check_font('Arial.ttf' if is_ascii(data['classes']) else 'Arial.Unicode.ttf')  # download fonts
         loaded_datasets.append(data)
 
-    for dataset in datasets[1:] if len(datasets) > 1 else datasets:
+    for dataset in datasets:
         data = check_file(dataset)
 
         # Download (optional)
@@ -315,20 +315,24 @@ def check_det_dataset(datasets, autodownload=True):
             raise SyntaxError(emojis(f"{dataset} key missing ❌.\n either 'names' or 'nc' are required in all data YAMLs."))
         if 'names' in data and 'nc' in data and len(data['names']) != data['nc']:
             raise SyntaxError(emojis(f"{dataset} 'names' length {len(data['names'])} and 'nc: {data['nc']}' must match."))
-        if 'names' not in data:
-            data['names'] = [f'class_{i}' for i in range(data['nc'])]
+
+        # if data['using_mapping'] is True:
+        #     data['names'] = [f'class_{i}' for i in list(data['mapping_names'].keys())]
+        # else:
+        #     data['nc'] = len(data['names'])
+
+        if data['using_mapping'] is False:
+            data['names'] = check_class_names(data['names'])
         else:
-            data['nc'] = len(data['names'])
-
-        data['names'] = check_class_names(data['names'])
-        data['mapping_to_default'] = check_class_names(data['mapping_to_default'])
-
+            data['names'] = check_class_names(data['mapping_names'])
+        # data['mapping_id'] = check_class_names(data['mapping_id'])
+        print(data)
         # Resolve paths
-        path = Path(extract_dir or data.get('path') or Path(data.get('yaml_file', '')).parent)  # dataset root
+        path = Path(extract_dir or data.get('data_dir') or Path(data.get('yaml_file', '')).parent)  # dataset root
 
         if not path.is_absolute():
             path = (DATASETS_DIR / path).resolve()
-        data['path'] = path  # download scripts
+        data['data_dir'] = path  # download scripts
         for k in 'train', 'val', 'test':
             if data.get(k):  # prepend path
                 if isinstance(data[k], str):

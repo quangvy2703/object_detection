@@ -113,8 +113,3 @@ class VisionTransformerModelLoader(ModelLoader):
         """Computes accuracy on a batch of predictions"""
         predictions = np.argmax(eval_pred.predictions, axis=1)
         return metric.compute(predictions=predictions, references=eval_pred.label_ids)
-
-
-class VisionTransformerLoader(ModelLoader):
-    def __init__(self):
-        pass

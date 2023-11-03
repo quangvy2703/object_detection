@@ -11,7 +11,8 @@ from rml.models.vision.object_detection.yolov8.ultralytics.models import yolo
 from rml.models.vision.object_detection.yolov8.ultralytics.nn.tasks import DetectionModel
 from rml.models.vision.object_detection.yolov8.ultralytics.utils import LOGGER, RANK
 from rml.models.vision.object_detection.yolov8.ultralytics.utils.plotting import plot_images, plot_labels, plot_results
-from rml.models.vision.object_detection.yolov8.ultralytics.utils.torch_utils import de_parallel, torch_distributed_zero_first
+from rml.models.vision.object_detection.yolov8.ultralytics.utils.torch_utils import de_parallel, \
+    torch_distributed_zero_first
 
 
 class DetectionTrainer(BaseTrainer):
@@ -28,7 +29,7 @@ class DetectionTrainer(BaseTrainer):
         ```
     """
 
-    def build_dataset(self, img_paths, mode='train', batch=None):
+    def build_dataset(self, img_paths, mode='train', batch=None, using_mapping=False):
         """
         Build YOLO Dataset.
 
@@ -36,9 +37,14 @@ class DetectionTrainer(BaseTrainer):
             img_path (str): Path to the folder containing images.
             mode (str): `train` mode or `val` mode, users are able to customize different augmentations for each mode.
             batch (int, optional): Size of batches, this is for `rect`. Defaults to None.
+            :param img_paths:
+            :param mode:
+            :param batch:
+            :param using_mapping:
         """
         gs = max(int(de_parallel(self.model).stride.max() if self.model else 0), 32)
-        return build_yolo_dataset(self.args, img_paths, batch, self.data, mode=mode, rect=mode == 'val', stride=gs)
+        return build_yolo_dataset(self.args, img_paths, batch, self.data, mode=mode, rect=mode == 'val', stride=gs,
+                                  using_mapping=using_mapping)
 
     def get_dataloader(self, dataset_paths, batch_size=16, rank=0, mode='train'):
         """Construct and return dataloader."""
@@ -62,8 +68,10 @@ class DetectionTrainer(BaseTrainer):
         # self.args.box *= 3 / nl  # scale to layers
         # self.args.cls *= self.data["nc"] / 80 * 3 / nl  # scale to classes and layers
         # self.args.cls *= (self.args.imgsz / 640) ** 2 * 3 / nl  # scale to image size and layers
-        self.model.nc = self.data[0]['nc']  # attach number of classes to model
-        self.model.names = self.data[0]['names']  # attach class names to model
+        self.model.nc = len(self.data[0]['names']) if self.data[0]['using_mapping'] is False \
+            else len(self.data[0]['mapping_id'])  # attach number of classes to model
+        self.model.names = self.data[0]['names'] if self.data[0]['using_mapping'] is False \
+            else self.data[0]['mapping_names']  # attach class names to model
         self.model.args = self.args  # attach hyperparameters to model
         # TODO: self.model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device) * nc
 
@@ -71,7 +79,7 @@ class DetectionTrainer(BaseTrainer):
         """Return a YOLO detection model."""
         model = DetectionModel(
             cfg,
-            nc=self.data[0]['nc'],
+            nc=len(self.data[0]['mapping_names']) if self.data[0]['using_mapping'] else len(self.data[0]['names']),
             verbose=verbose and RANK == -1
         )
         if weights:
