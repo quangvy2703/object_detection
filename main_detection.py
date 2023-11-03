@@ -9,7 +9,7 @@ from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 def main(args):
     model_loader = YOLOv8ModelLoader.from_pretrained(
-        model_path='rml/data/models/yolov8n.pt'
+        model_path=args.pretrained_path
     )
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     print(train_configs)
@@ -51,6 +51,14 @@ if __name__ == "__main__":
         default=10,
         metavar="N",
         help="number of epochs to train (default: 10)",
+    )
+
+    parser.add_argument(
+        "--pretrained_path",
+        type=str,
+        default='rml/data/models/yolov8n.pt',
+        metavar="N",
+        help="pretrained model path",
     )
 
     parser.add_argument(

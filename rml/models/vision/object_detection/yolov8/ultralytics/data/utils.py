@@ -80,6 +80,7 @@ def verify_image(args):
     except Exception as e:
         nc = 1
         msg = f'{prefix}WARNING ⚠️ {im_file}: ignoring corrupt image/label: {e}'
+        raise e
     return (im_file, cls), nf, nc, msg
 
 
