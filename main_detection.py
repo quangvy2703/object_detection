@@ -13,9 +13,10 @@ def main(args):
     )
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     print(train_configs)
-    args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
-    args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
-    args.metrics = [item.strip() for item in args.metrics.split(',')]
+    delimiter = "|"
+    args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(delimiter)]
+    args.data_dirs = [item.strip() for item in args.data_dirs.split(delimiter)]
+    args.metrics = [item.strip() for item in args.metrics.split(delimiter)]
 
     YOLOv8ModelLoader.update_data_config_file(
         data_config_files=args.training_data_config_paths,
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--metrics",
         type=str,
-        default="precision, recall, average_precision",
+        default="precision | recall | average_precision",
         metavar="N",
         help="using metrics",
     )
