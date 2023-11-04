@@ -27,11 +27,11 @@ def main(args):
         train_configs=train_configs
     )
 
-    if hasattr(args, "remote_save_dir"):
-        OnTrainEnd(
-            local_saved_dir=train_configs["project"],
-            remote_saved_dir=args.remote_save_dir
-        ).on_train_end()
+    # if hasattr(args, "remote_save_dir"):
+    #     OnTrainEnd(
+    #         local_saved_dir=train_configs["project"],
+    #         remote_saved_dir=args.remote_save_dir
+    #     ).on_train_end()
 
 
 if __name__ == "__main__":
