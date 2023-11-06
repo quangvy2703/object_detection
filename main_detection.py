@@ -11,7 +11,6 @@ def main(args):
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path=args.pretrained_path
     )
-    train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     delimiter = ";"
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(delimiter)]
     args.data_dirs = [item.strip() for item in args.data_dirs.split(delimiter)]
@@ -21,6 +20,8 @@ def main(args):
         data_config_files=args.training_data_config_paths,
         data_dirs=args.data_dirs
     )
+    print(args.train_config_path)
+    train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
     print(train_configs)
     model_loader.train(
@@ -42,7 +43,7 @@ if __name__ == "__main__":
         "--batch",
         type=int,
         default=64,
-        metavar="N",
+        # metavar="N",
         help="input batch size for training (default: 64)",
     )
 
@@ -50,7 +51,7 @@ if __name__ == "__main__":
         "--epochs",
         type=int,
         default=10,
-        metavar="N",
+        # metavar="N",
         help="number of epochs to train (default: 10)",
     )
 
@@ -58,7 +59,7 @@ if __name__ == "__main__":
         "--pretrained_path",
         type=str,
         default='rml/data/models/yolov8n.pt',
-        metavar="N",
+        # metavar="N",
         help="pretrained model path",
     )
 
@@ -66,7 +67,7 @@ if __name__ == "__main__":
         "--pretrained",
         type=bool,
         default=True,
-        metavar="N",
+        # metavar="N",
         help="using pretrained model",
     )
 
@@ -74,7 +75,7 @@ if __name__ == "__main__":
         "--project",
         type=str,
         default="furniture-detection",
-        metavar="N",
+        # metavar="N",
         help="",
     )
 
@@ -88,21 +89,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_data_config_paths",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="training datasets configs",
     )
 
     parser.add_argument(
         "--train_config_path",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="training configs",
     )
 
     parser.add_argument(
         "--data_dirs",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="data directory",
     )
 
@@ -110,15 +111,15 @@ if __name__ == "__main__":
         "--save_dir",
         type=str,
         default="/Users/phamvy/Projects/source/RML/rml",
-        metavar="N",
+        # metavar="N",
         help="output directory",
     )
 
     parser.add_argument(
         "--metrics",
         type=str,
-        default="precision | recall | average_precision",
-        metavar="N",
+        default="precision;recall;average_precision",
+        # metavar="N",
         help="using metrics",
     )
 
