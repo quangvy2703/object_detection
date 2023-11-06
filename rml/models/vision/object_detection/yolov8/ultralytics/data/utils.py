@@ -273,21 +273,21 @@ def check_det_dataset(datasets, autodownload=True):
         (dict): Parsed dataset information and paths.
     """
     loaded_datasets = []
-    if len(datasets) > 1:
-        data = check_file(datasets[0])
-        if isinstance(data, (str, Path)):
-            data = yaml_load(data, append_filename=True)  # dictionary
-
-        # Checks
-        if 'classes' not in data:
-            raise SyntaxError(emojis(f"{datasets[0]} key missing ❌.\n 'classes' is required in anchor data YAMLs."))
-
-        data['classes'] = check_class_names(data['classes'])
-        data['nc'] = len(data['classes'])
-        data['names'] = data['classes']
-        # Parse YAML
-        check_font('Arial.ttf' if is_ascii(data['classes']) else 'Arial.Unicode.ttf')  # download fonts
-        loaded_datasets.append(data)
+    # if len(datasets) > 1:
+    #     data = check_file(datasets[0])
+    #     if isinstance(data, (str, Path)):
+    #         data = yaml_load(data, append_filename=True)  # dictionary
+    #
+    #     # Checks
+    #     if 'classes' not in data:
+    #         raise SyntaxError(emojis(f"{datasets[0]} key missing ❌.\n 'classes' is required in anchor data YAMLs."))
+    #
+    #     data['classes'] = check_class_names(data['classes'])
+    #     data['nc'] = len(data['classes'])
+    #     data['names'] = data['classes']
+    #     # Parse YAML
+    #     check_font('Arial.ttf' if is_ascii(data['classes']) else 'Arial.Unicode.ttf')  # download fonts
+    #     loaded_datasets.append(data)
 
     for dataset in datasets:
         data = check_file(dataset)
@@ -327,7 +327,6 @@ def check_det_dataset(datasets, autodownload=True):
         else:
             data['names'] = check_class_names(data['mapping_names'])
         # data['mapping_id'] = check_class_names(data['mapping_id'])
-        print(data)
         # Resolve paths
         path = Path(extract_dir or data.get('data_dir') or Path(data.get('yaml_file', '')).parent)  # dataset root
 

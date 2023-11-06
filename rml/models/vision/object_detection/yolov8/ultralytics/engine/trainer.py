@@ -138,7 +138,7 @@ class BaseTrainer:
             raise RuntimeError(emojis(f"Dataset '{self.args.data}' error ❌ {e}")) from e
 
         self.trainset, self.testset = [], []
-        for data in self.data[1:] if len(self.data) > 1 else self.data:
+        for data in self.data:
             trainset, testset = self.get_dataset(data)
             self.trainset.append(trainset)
             self.testset.append(testset)
@@ -449,12 +449,10 @@ class BaseTrainer:
         os.mkdir(os.path.join(self.save_dir, "plot_scores"))
 
         debug_images = [f for f in os.listdir(self.save_dir) if ('train' in f.lower() or 'val' in f.lower())]
-        print(debug_images)
         for debug_image in debug_images:
             os.remove(os.path.join(self.save_dir, debug_image))
 
         score_images = [f for f in os.listdir(self.save_dir) if ('.png' in f.lower() or '.jpg' in f.lower())]
-        print(score_images)
         for score_image in score_images:
             shutil.move(
                 os.path.join(self.save_dir, score_image),

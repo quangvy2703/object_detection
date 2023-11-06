@@ -60,6 +60,7 @@ class YOLODataset(BaseDataset):
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
         desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
         total = len(self.im_files)
+
         for _data in self.data:
             nkpt, ndim = _data.get('kpt_shape', (0, 0))
             label_id_mapping = _data.get('mapping_id', None)

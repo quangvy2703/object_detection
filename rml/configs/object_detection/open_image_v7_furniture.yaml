@@ -1,4 +1,4 @@
-data_dir: /Users/phamvy/Projects/dataset/open_images
+data_dir: /Users/phamvy/Projects/dataset/furniture_dataset
 mapping_id:
   0: 0
   1: 1
@@ -122,7 +122,6 @@ names:
   35: Closet
   36: Bathroom accessory
   37: Dishwasher
-path: /Users/phamvy/Projects/dataset/furniture_dataset
-train: train/images
+train: images/train
 using_mapping: true
-val: valid/images
+val: images/valid
