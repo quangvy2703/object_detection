@@ -1,4 +1,4 @@
-data_dir: /Users/phamvy/Projects/dataset/rever_furniture_dataset
+data_dir: /Users/phamvy/Projects/dataset/rever
 mapping_id:
   0: -1
   1: -1
@@ -157,6 +157,6 @@ names:
   53: Microwave
   54: Oven
 test: null
-train: images/train
+train: train/images
 using_mapping: true
-val: images/valid
+val: valid/images

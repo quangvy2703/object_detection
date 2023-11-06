@@ -78,8 +78,8 @@ names:
   37: Dishwasher
 
 path: /Users/phamvy/Projects/dataset/furniture_dataset
-train: images/train
-val: images/valid
+train: train/images
+val: valid/images
 
 
 
