@@ -122,6 +122,7 @@ names:
   35: Closet
   36: Bathroom accessory
   37: Dishwasher
-train: train/images
+test: null
+train: train/images/
 using_mapping: true
-val: valid/images
+val: valid/images/
