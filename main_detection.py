@@ -21,6 +21,9 @@ def main(args):
         data_dirs=args.data_dirs
     )
     print(args.train_config_path)
+    print("/opt/ml/input/data/train/ ", os.listdir("/opt/ml/input/data/train/"))
+    print("/opt/ml/input/data/train/rever ", os.listdir("/opt/ml/input/data/train/rever"))
+    print("/opt/ml/input/data/train/open_images_v7 ", os.listdir("/opt/ml/input/data/train/open_images_v7"))
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
     print(train_configs)
