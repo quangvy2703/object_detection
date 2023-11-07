@@ -118,7 +118,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--metrics",
         type=str,
-        default="precision;recall;average_precision",
+        default="precisionphamquangvyrecallphamquangvyaverage_precision",
         # metavar="N",
         help="using metrics",
     )
