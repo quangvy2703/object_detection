@@ -85,7 +85,7 @@ class YOLODataset(BaseDataset):
                 )
                 pbar = TQDM(results, desc=desc, total=total)
                 for im_file, lb, shape, segments, keypoint, nm_f, nf_f, ne_f, nc_f, msg in pbar:
-                    desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
+                    # desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
                     nm += nm_f
                     nf += nf_f
                     ne += ne_f
