@@ -59,10 +59,10 @@ class YOLODataset(BaseDataset):
         """
         x = {'labels': []}
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
-        desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
         total = len(self.im_files)
 
         for _data in self.data:
+            desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
             nkpt, ndim = _data.get('kpt_shape', (0, 0))
             label_id_mapping = _data.get('mapping_id', None)
             if self.use_keypoints and (nkpt <= 0 or ndim not in (2, 3)):
@@ -85,6 +85,7 @@ class YOLODataset(BaseDataset):
                 )
                 pbar = TQDM(results, desc=desc, total=total)
                 for im_file, lb, shape, segments, keypoint, nm_f, nf_f, ne_f, nc_f, msg in pbar:
+                    desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
                     nm += nm_f
                     nf += nf_f
                     ne += ne_f
@@ -102,7 +103,7 @@ class YOLODataset(BaseDataset):
                                 bbox_format='xywh'))
                     if msg:
                         msgs.append(msg)
-                    pbar.desc = f'{desc} {nf} images, {nm + ne} backgrounds, {nc} corrupt'
+                    pbar.desc = f'{desc} {nf} images [{im_file}], {nm + ne} backgrounds, {nc} corrupt'
                 pbar.close()
 
         if msgs:

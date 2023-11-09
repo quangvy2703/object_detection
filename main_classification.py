@@ -9,7 +9,7 @@ from rml.utils.on_train_end import OnTrainEnd
 def main(args):
 
     model_loader = YOLOv8ModelLoader.from_pretrained(
-        model_path="yolov8n-cls.pt"
+        model_path=args.pretrained_path
     )
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         "--batch",
         type=int,
         default=64,
-        metavar="N",
+        # metavar="N",
         help="input batch size for training (default: 64)",
     )
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         "--epochs",
         type=int,
         default=10,
-        metavar="N",
+        # metavar="N",
         help="number of epochs to train (default: 10)",
     )
 
@@ -56,7 +56,15 @@ if __name__ == "__main__":
         "--pretrained",
         type=bool,
         default=True,
-        metavar="N",
+        # metavar="N",
+        help="using pretrained model",
+    )
+
+    parser.add_argument(
+        "--pretrained_path",
+        type=str,
+        default="yolov8n-cls.pt",
+        # metavar="N",
         help="using pretrained model",
     )
 
@@ -64,7 +72,7 @@ if __name__ == "__main__":
         "--project",
         type=str,
         default="furniture-detection",
-        metavar="N",
+        # metavar="N",
         help="",
     )
 
@@ -78,21 +86,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_data_config_paths",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="training datasets configs",
     )
 
     parser.add_argument(
         "--train_config_path",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="training configs",
     )
 
     parser.add_argument(
         "--data_dirs",
         type=str,
-        metavar="N",
+        # metavar="N",
         help="data directory",
     )
 
@@ -100,7 +108,7 @@ if __name__ == "__main__":
         "--save_dir",
         type=str,
         default="/Users/phamvy/Projects/source/RML/rml",
-        metavar="N",
+        # metavar="N",
         help="output directory",
     )
 

@@ -115,16 +115,8 @@ def verify_image_label(args):
                 lb_holder = []
                 for _lb in lb:
                     if int(label_id_mapping.get(int(_lb[0]))) != -1:
-                        # print(label_id_mapping, int(_lb[0]))
-                        # print("before", _lb)
-                        # _lb[0] = label_id_mapping.get(int(_lb[0]))
-                        # print("after ", _lb)
                         lb_holder.append(copy.deepcopy(_lb))
                         lb_holder[-1][0] = label_id_mapping.get(int(_lb[0]))
-                if "16371424235515677.jpg" in im_file:
-                    print("==================verify_image_labels================")
-                    print(lb)
-                    print(lb_holder)
 
                 if len(lb_holder) == 0:
                     return [None, None, None, None, None, nm, nf, ne, nc, msg]
