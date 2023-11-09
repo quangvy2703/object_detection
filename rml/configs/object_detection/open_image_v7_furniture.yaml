@@ -37,6 +37,7 @@ mapping_id:
   34: 30
   35: 31
   36: 32
+  37: -1
 mapping_names:
   0: lamp
   1: cupboard
@@ -119,6 +120,7 @@ names:
   34: Closet
   35: Bathroom accessory
   36: Dishwasher
+  37: Dishwasher
 test: null
 train: train/images/
 using_mapping: true

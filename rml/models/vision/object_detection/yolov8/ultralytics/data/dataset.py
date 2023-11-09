@@ -60,51 +60,52 @@ class YOLODataset(BaseDataset):
         x = {'labels': []}
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
         total = len(self.im_files)
-
+        label_id_mapping = {}
         for _data in self.data:
-            desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
-            nkpt, ndim = _data.get('kpt_shape', (0, 0))
-            label_id_mapping = _data.get('mapping_id', None)
-            if self.use_keypoints and (nkpt <= 0 or ndim not in (2, 3)):
-                raise ValueError("'kpt_shape' in data.yaml missing or incorrect. Should be a list with [number of "
-                                 "keypoints, number of dims (2 for x,y or 3 for x,y,visible)], i.e. 'kpt_shape: [17, 3]'")
-            with ThreadPool(NUM_THREADS) as pool:
-                results = pool.imap(
-                    func=verify_image_label,
-                    iterable=zip(
-                        self.im_files,
-                        self.label_files,
-                        repeat(self.prefix),
-                        repeat(self.use_keypoints),
-                        repeat(self.num_classes),
-                        # repeat(len(_data['names'])),
-                        repeat(nkpt),
-                        repeat(ndim),
-                        repeat(label_id_mapping)
-                    )
+            label_id_mapping[_data["data_dir"].stem] = _data.get('mapping_id', None)
+        # for _data in self.data:
+        desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
+        nkpt, ndim = _data.get('kpt_shape', (0, 0))
+        if self.use_keypoints and (nkpt <= 0 or ndim not in (2, 3)):
+            raise ValueError("'kpt_shape' in data.yaml missing or incorrect. Should be a list with [number of "
+                             "keypoints, number of dims (2 for x,y or 3 for x,y,visible)], i.e. 'kpt_shape: [17, 3]'")
+        with ThreadPool(NUM_THREADS) as pool:
+            results = pool.imap(
+                func=verify_image_label,
+                iterable=zip(
+                    self.im_files,
+                    self.label_files,
+                    repeat(self.prefix),
+                    repeat(self.use_keypoints),
+                    repeat(self.num_classes),
+                    # repeat(len(_data['names'])),
+                    repeat(nkpt),
+                    repeat(ndim),
+                    repeat(label_id_mapping)
                 )
-                pbar = TQDM(results, desc=desc, total=total)
-                for im_file, lb, shape, segments, keypoint, nm_f, nf_f, ne_f, nc_f, msg in pbar:
-                    # desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
-                    nm += nm_f
-                    nf += nf_f
-                    ne += ne_f
-                    nc += nc_f
-                    if im_file:
-                        x['labels'].append(
-                            dict(
-                                im_file=im_file,
-                                shape=shape,
-                                cls=lb[:, 0:1],  # n, 1
-                                bboxes=lb[:, 1:],  # n, 4
-                                segments=segments,
-                                keypoints=keypoint,
-                                normalized=True,
-                                bbox_format='xywh'))
-                    if msg:
-                        msgs.append(msg)
-                    pbar.desc = f'{desc} {nf} images [{im_file}], {nm + ne} backgrounds, {nc} corrupt'
-                pbar.close()
+            )
+            pbar = TQDM(results, desc=desc, total=total)
+            for im_file, lb, shape, segments, keypoint, nm_f, nf_f, ne_f, nc_f, msg in pbar:
+                # desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
+                nm += nm_f
+                nf += nf_f
+                ne += ne_f
+                nc += nc_f
+                if im_file:
+                    x['labels'].append(
+                        dict(
+                            im_file=im_file,
+                            shape=shape,
+                            cls=lb[:, 0:1],  # n, 1
+                            bboxes=lb[:, 1:],  # n, 4
+                            segments=segments,
+                            keypoints=keypoint,
+                            normalized=True,
+                            bbox_format='xywh'))
+                if msg:
+                    msgs.append(msg)
+                pbar.desc = f'{desc} {nf} images [{im_file}], {nm + ne} backgrounds, {nc} corrupt'
+            pbar.close()
 
         if msgs:
             LOGGER.info('\n'.join(msgs))
