@@ -124,5 +124,5 @@ names:
 
 test: null
 train: train/images/
-using_mapping: false
+using_mapping: true
 val: valid/images/
