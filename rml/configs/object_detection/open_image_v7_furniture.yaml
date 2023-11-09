@@ -32,12 +32,12 @@ mapping_id:
   29: 25
   30: 26
   31: 27
-  32: 28
-  33: 29
-  34: 30
-  35: 31
-  36: 32
-  37: -1
+  32: 36
+  33: 28
+  34: 29
+  35: 30
+  36: 31
+  37: 32
 mapping_names:
   0: lamp
   1: cupboard
@@ -115,13 +115,14 @@ names:
   29: Nightstand
   30: Heater
   31: Piano
-  32: Coffee table
-  33: Coffeemaker
-  34: Closet
-  35: Bathroom accessory
-  36: Dishwasher
+  32: Kitchen cabinet
+  33: Coffee table
+  34: Coffeemaker
+  35: Closet
+  36: Bathroom accessory
   37: Dishwasher
+
 test: null
 train: train/images/
-using_mapping: true
+using_mapping: false
 val: valid/images/
