@@ -2,29 +2,28 @@ import argparse
 import os
 import json
 
-from rml.model_loader.image_classification import VisionTransformerModelLoader
+from rml.model_loader.object_detection import YOLOv8ModelLoader
 from rml.utils.on_train_end import OnTrainEnd
-from rml.dataloader.image_classification import ImageClassificationDataset
 
 
 def main(args):
 
-    model_loader = VisionTransformerModelLoader.from_pretrained(
-        model_path="microsoft/swin-tiny-patch4-window7-224"
+    model_loader = YOLOv8ModelLoader.from_pretrained(
+        model_path="yolov8n-cls.pt"
     )
     train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
     args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
 
-    YOLOv8ModelLoader.update_data_config_file(
-        data_config_files=args.training_data_config_paths,
-        paths=args.data_dirs
-    )
-    train_configs = YOLOv8ModelLoader.merge_configs(train_configs, vars(args))
+    model_loader.train(**args)
 
-    model_loader.train(
-        training_data_config_paths=args.training_data_config_paths,
-        train_configs=train_configs
+    model.train(
+        data={
+            '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml"
+        },
+        epochs=100,
+        imgsz=640,
+        save_dir="runs"
     )
 
     # if hasattr(args, "remote_save_dir"):
@@ -122,3 +121,19 @@ if __name__ == "__main__":
     #     ]),
     #     save=True
     # )
+
+
+from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
+
+# Load a model
+model = YOLO('yolov8n-cls.pt')  # load a pretrained model (recommended for training)
+
+# Train the model
+results = model.train(
+    data={
+        '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml"
+    },
+    epochs=100,
+    imgsz=640,
+    save_dir="runs"
+)

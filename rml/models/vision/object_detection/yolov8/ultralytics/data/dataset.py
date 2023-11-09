@@ -1,5 +1,6 @@
 # rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 import contextlib
+import os
 from itertools import repeat
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
@@ -217,7 +218,7 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
     YOLO Classification Dataset.
 
     Args:
-        root (str): Dataset path.
+        roots (List[str]): Dataset paths.
 
     Attributes:
         cache_ram (bool): True if images should be cached in RAM, False otherwise.
@@ -227,24 +228,34 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
         album_transforms (callable, optional): Albumentations transforms applied to the dataset if augment is True.
     """
 
-    def __init__(self, root, args, augment=False, cache=False, prefix=''):
+    def __init__(self, datasets: Dict[str, str], args, augment=False, cache=False, prefix=''):
         """
         Initialize YOLO object with root, image size, augmentations, and cache settings.
 
         Args:
-            root (str): Dataset path.
+            datasets (Dict[str, str]): Dataset path.
             args (Namespace): Argument parser containing dataset related settings.
             augment (bool, optional): True if dataset should be augmented, False otherwise. Defaults to False.
             cache (bool | str | optional): Cache setting, can be True, False, 'ram' or 'disk'. Defaults to False.
         """
-        super().__init__(root=root)
-        if augment and args.fraction < 1.0:  # reduce training fraction
-            self.samples = self.samples[:round(len(self.samples) * args.fraction)]
-        self.prefix = colorstr(f'{prefix}: ') if prefix else ''
-        self.cache_ram = cache is True or cache == 'ram'
-        self.cache_disk = cache == 'disk'
-        self.samples = self.verify_images()  # filter out bad images
-        self.samples = [list(x) + [Path(x[0]).with_suffix('.npy'), None] for x in self.samples]  # file, index, npy, im
+        self.all_samples = []
+        for root, config_path in datasets.items():
+            if os.path.exists(args.data[str(root)]):
+                data_config = load_data_config(args.data[str(root)])
+                if data_config.get('using_mapping', False) is True:
+                    self.class_id_mapping = data_config.get('mapping_id')
+                else:
+                    self.class_id_mapping = None
+            super().__init__(root=root)
+            if augment and args.fraction < 1.0:  # reduce training fraction
+                self.samples = self.samples[:round(len(self.samples) * args.fraction)]
+            self.prefix = colorstr(f'{prefix}: ') if prefix else ''
+            self.cache_ram = cache is True or cache == 'ram'
+            self.cache_disk = cache == 'disk'
+            self.samples = self.verify_images()  # filter out bad images
+            self.samples = [list(x) + [Path(x[0]).with_suffix('.npy'), None] for x in self.samples]  # file, index, npy, im
+            self.all_samples.extend(self.samples)
+
         self.torch_transforms = classify_transforms(args.imgsz, rect=args.rect)
         self.album_transforms = classify_albumentations(
             augment=augment,
@@ -319,6 +330,10 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
         save_dataset_cache_file(self.prefix, path, x)
         return samples
 
+def load_data_config(path):
+    with open(path, 'r') as file:
+        configs = yaml.safe_load(file)
+        return configs
 
 def load_dataset_cache_file(path):
     """Load an rml.vision.object_detection.models.yolov8.ultralytics *.cache dictionary from path."""

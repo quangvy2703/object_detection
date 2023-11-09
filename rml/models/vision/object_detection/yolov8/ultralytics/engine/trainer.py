@@ -136,12 +136,19 @@ class BaseTrainer:
                     self.args.data = self.data['yaml_file']  # for validating 'yolo train data=url.zip' usage
         except Exception as e:
             raise RuntimeError(emojis(f"Dataset '{self.args.data}' error ❌ {e}")) from e
-
-        self.trainset, self.testset = [], []
+        if self.args.task == 'classify':
+            self.trainset, self.testset = {}, {}
+        else:
+            self.trainset, self.testset = [], []
         for data in self.data:
-            trainset, testset = self.get_dataset(data)
-            self.trainset.append(trainset)
-            self.testset.append(testset)
+            if self.args.task == 'classify':
+                trainset, testset = self.get_dataset(self.data[data])
+                self.trainset[data] = trainset
+                self.testset[data] = testset
+            else:
+                trainset, testset = self.get_dataset(data)
+                self.trainset.append(trainset)
+                self.testset.append(testset)
 
         self.ema = None
 

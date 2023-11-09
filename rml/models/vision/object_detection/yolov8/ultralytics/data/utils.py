@@ -2,6 +2,7 @@
 
 import contextlib
 import copy
+import yaml
 import hashlib
 import json
 import os
@@ -16,10 +17,11 @@ from tarfile import is_tarfile
 import cv2
 import numpy as np
 from typing import Dict
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFile
 
 from rml.models.vision.object_detection.yolov8.ultralytics.nn.autobackend import check_class_names
-from rml.models.vision.object_detection.yolov8.ultralytics.utils import (DATASETS_DIR, LOGGER, NUM_THREADS, ROOT, SETTINGS_YAML, TQDM, clean_url, colorstr,
+from rml.models.vision.object_detection.yolov8.ultralytics.utils import (DATASETS_DIR, LOGGER, NUM_THREADS, ROOT,
+                                                                         SETTINGS_YAML, TQDM, clean_url, colorstr,
                                                                          emojis, yaml_load)
 from rml.models.vision.object_detection.yolov8.ultralytics.utils.checks import check_file, check_font, is_ascii
 from rml.models.vision.object_detection.yolov8.ultralytics.utils.downloads import download, safe_download, unzip_file
@@ -29,7 +31,6 @@ HELP_URL = 'See https://docs.rml.vision.object_detection.models.yolov8.ultralyti
 IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'  # image suffixes
 VID_FORMATS = 'asf', 'avi', 'gif', 'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'ts', 'wmv', 'webm'  # video suffixes
 PIN_MEMORY = str(os.getenv('PIN_MEMORY', True)).lower() == 'true'  # global pin_memory for dataloaders
-
 
 def img2label_paths(img_paths):
     """Define label paths as a function of image paths."""
@@ -68,7 +69,7 @@ def verify_image(args):
         im.verify()  # PIL verify
         shape = exif_size(im)  # image size
         shape = (shape[1], shape[0])  # hw
-        assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
+        assert (shape[0] > 9) & (shape[1] > 9), f'image size of {im_file} {shape} <10 pixels'
         assert im.format.lower() in IMG_FORMATS, f'invalid image format {im.format}'
         if im.format.lower() in ('jpg', 'jpeg'):
             with open(im_file, 'rb') as f:
@@ -80,7 +81,7 @@ def verify_image(args):
     except Exception as e:
         nc = 1
         msg = f'{prefix}WARNING ⚠️ {im_file}: ignoring corrupt image/label: {e}'
-        raise e
+        # raise e
     return (im_file, cls), nf, nc, msg
 
 
@@ -109,12 +110,21 @@ def verify_image_label(args):
             nf = 1  # label found
             with open(lb_file) as f:
                 lb = [x.split() for x in f.read().strip().splitlines() if len(x)]
+
                 # print(lb)
                 lb_holder = []
-                for _lb in (lb):
+                for _lb in lb:
                     if int(label_id_mapping.get(int(_lb[0]))) != -1:
-                        _lb[0] = label_id_mapping.get(int(_lb[0]))
-                        lb_holder.append(_lb)
+                        # print(label_id_mapping, int(_lb[0]))
+                        # print("before", _lb)
+                        # _lb[0] = label_id_mapping.get(int(_lb[0]))
+                        # print("after ", _lb)
+                        lb_holder.append(copy.deepcopy(_lb))
+                        lb_holder[-1][0] = label_id_mapping.get(int(_lb[0]))
+                if "16371424235515677.jpg" in im_file:
+                    print("==================verify_image_labels================")
+                    print(lb)
+                    print(lb_holder)
 
                 if len(lb_holder) == 0:
                     return [None, None, None, None, None, nm, nf, ne, nc, msg]
@@ -313,9 +323,11 @@ def check_det_dataset(datasets, autodownload=True):
                     raise SyntaxError(
                         emojis(f"{dataset} '{k}:' key missing ❌.\n'train' and 'val' are required in all data YAMLs."))
         if 'names' not in data and 'nc' not in data:
-            raise SyntaxError(emojis(f"{dataset} key missing ❌.\n either 'names' or 'nc' are required in all data YAMLs."))
+            raise SyntaxError(
+                emojis(f"{dataset} key missing ❌.\n either 'names' or 'nc' are required in all data YAMLs."))
         if 'names' in data and 'nc' in data and len(data['names']) != data['nc']:
-            raise SyntaxError(emojis(f"{dataset} 'names' length {len(data['names'])} and 'nc: {data['nc']}' must match."))
+            raise SyntaxError(
+                emojis(f"{dataset} 'names' length {len(data['names'])} and 'nc: {data['nc']}' must match."))
 
         # if data['using_mapping'] is True:
         #     data['names'] = [f'class_{i}' for i in list(data['mapping_names'].keys())]
@@ -365,14 +377,15 @@ def check_det_dataset(datasets, autodownload=True):
                 else:  # python script
                     exec(s, {'yaml': data})
                 dt = f'({round(time.time() - t, 1)}s)'
-                s = f"success ✅ {dt}, saved to {colorstr('bold', DATASETS_DIR)}" if r in (0, None) else f'failure {dt} ❌'
+                s = f"success ✅ {dt}, saved to {colorstr('bold', DATASETS_DIR)}" if r in (
+                0, None) else f'failure {dt} ❌'
                 LOGGER.info(f'Dataset download {s}\n')
         check_font('Arial.ttf' if is_ascii(data['names']) else 'Arial.Unicode.ttf')  # download fonts
         loaded_datasets.append(data)
     return loaded_datasets  # dictionary
 
 
-def check_cls_dataset(dataset, split=''):
+def check_cls_dataset(datasets, split=''):
     """
     Checks a classification dataset such as Imagenet.
 
@@ -391,56 +404,68 @@ def check_cls_dataset(dataset, split=''):
             - 'nc' (int): The number of classes in the dataset.
             - 'names' (dict): A dictionary of class names in the dataset.
     """
-
+    loaded_datasets = {}
     # Download (optional if dataset=https://file.zip is passed directly)
-    if str(dataset).startswith(('http:/', 'https:/')):
-        dataset = safe_download(dataset, dir=DATASETS_DIR, unzip=True, delete=False)
+    for dataset, config_path in datasets.items():
+        with open(config_path, 'r') as file:
+            configs = yaml.safe_load(file)
 
-    dataset = Path(dataset)
-    data_dir = (dataset if dataset.is_dir() else (DATASETS_DIR / dataset)).resolve()
-    if not data_dir.is_dir():
-        LOGGER.warning(f'\nDataset not found ⚠️, missing path {data_dir}, attempting download...')
-        t = time.time()
-        if str(dataset) == 'imagenet':
-            subprocess.run(f"bash {ROOT / 'data/scripts/get_imagenet.sh'}", shell=True, check=True)
-        else:
-            url = f'https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/yolov5/releases/download/v1.0/{dataset}.zip'
-            download(url, dir=data_dir.parent)
-        s = f"Dataset download success ✅ ({time.time() - t:.1f}s), saved to {colorstr('bold', data_dir)}\n"
-        LOGGER.info(s)
-    train_set = data_dir / 'train'
-    val_set = data_dir / 'val' if (data_dir / 'val').exists() else data_dir / 'validation' if \
-        (data_dir / 'validation').exists() else None  # data/test or data/val
-    test_set = data_dir / 'test' if (data_dir / 'test').exists() else None  # data/val or data/test
-    if split == 'val' and not val_set:
-        LOGGER.warning("WARNING ⚠️ Dataset 'split=val' not found, using 'split=test' instead.")
-    elif split == 'test' and not test_set:
-        LOGGER.warning("WARNING ⚠️ Dataset 'split=test' not found, using 'split=val' instead.")
+        if str(dataset).startswith(('http:/', 'https:/')):
+            dataset = safe_download(dataset, dir=DATASETS_DIR, unzip=True, delete=False)
 
-    nc = len([x for x in (data_dir / 'train').glob('*') if x.is_dir()])  # number of classes
-    names = [x.name for x in (data_dir / 'train').iterdir() if x.is_dir()]  # class names list
-    names = dict(enumerate(sorted(names)))
-
-    # Print to console
-    for k, v in {'train': train_set, 'val': val_set, 'test': test_set}.items():
-        prefix = f'{colorstr(f"{k}:")} {v}...'
-        if v is None:
-            LOGGER.info(prefix)
-        else:
-            files = [path for path in v.rglob('*.*') if path.suffix[1:].lower() in IMG_FORMATS]
-            nf = len(files)  # number of files
-            nd = len({file.parent for file in files})  # number of directories
-            if nf == 0:
-                if k == 'train':
-                    raise FileNotFoundError(emojis(f"{dataset} '{k}:' no training images found ❌ "))
-                else:
-                    LOGGER.warning(f'{prefix} found {nf} images in {nd} classes: WARNING ⚠️ no images found')
-            elif nd != nc:
-                LOGGER.warning(f'{prefix} found {nf} images in {nd} classes: ERROR ❌️ requires {nc} classes, not {nd}')
+        dataset = Path(dataset)
+        data_dir = (dataset if dataset.is_dir() else (DATASETS_DIR / dataset)).resolve()
+        if not data_dir.is_dir():
+            LOGGER.warning(f'\nDataset not found ⚠️, missing path {data_dir}, attempting download...')
+            t = time.time()
+            if str(dataset) == 'imagenet':
+                subprocess.run(f"bash {ROOT / 'data/scripts/get_imagenet.sh'}", shell=True, check=True)
             else:
-                LOGGER.info(f'{prefix} found {nf} images in {nd} classes ✅ ')
+                url = f'https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/yolov5/releases/download/v1.0/{dataset}.zip'
+                download(url, dir=data_dir.parent)
+            s = f"Dataset download success ✅ ({time.time() - t:.1f}s), saved to {colorstr('bold', data_dir)}\n"
+            LOGGER.info(s)
+        train_set = data_dir / 'train'
+        val_set = data_dir / 'val' if (data_dir / 'val').exists() else data_dir / 'validation' if \
+            (data_dir / 'validation').exists() else None  # data/test or data/val
+        test_set = data_dir / 'test' if (data_dir / 'test').exists() else None  # data/val or data/test
+        if split == 'val' and not val_set:
+            LOGGER.warning("WARNING ⚠️ Dataset 'split=val' not found, using 'split=test' instead.")
+        elif split == 'test' and not test_set:
+            LOGGER.warning("WARNING ⚠️ Dataset 'split=test' not found, using 'split=val' instead.")
 
-    return {'train': train_set, 'val': val_set, 'test': test_set, 'nc': nc, 'names': names}
+        # if configs["using_mapping"] is False:
+        #     # nc = len([x for x in (data_dir / 'train').glob('*') if x.is_dir()])  # number of classes
+        #     names = configs["names"]
+        #     nc = len(names)
+        #     # names = [x.name for x in (data_dir / 'train').iterdir() if x.is_dir()]  # class names list
+        #     # names = dict(enumerate(sorted(names)))
+        # else:
+        names = configs["mapping_names"] if configs["using_mapping"] else configs["names"]
+        nc = len(names)
+
+        # Print to console
+        for k, v in {'train': train_set, 'val': val_set, 'test': test_set}.items():
+            prefix = f'{colorstr(f"{k}:")} {v}...'
+            if v is None:
+                LOGGER.info(prefix)
+            else:
+                files = [path for path in v.rglob('*.*') if path.suffix[1:].lower() in IMG_FORMATS]
+                nf = len(files)  # number of files
+                nd = len({file.parent for file in files})  # number of directories
+                if nf == 0:
+                    if k == 'train':
+                        raise FileNotFoundError(emojis(f"{dataset} '{k}:' no training images found ❌ "))
+                    else:
+                        LOGGER.warning(f'{prefix} found {nf} images in {nd} classes: WARNING ⚠️ no images found')
+                elif nd != nc:
+                    LOGGER.warning(
+                        f'{prefix} found {nf} images in {nd} classes: ERROR ❌️ requires {nc} classes, not {nd}')
+                else:
+                    LOGGER.info(f'{prefix} found {nf} images in {nd} classes ✅ ')
+            loaded_datasets[dataset] = {'train': train_set, 'val': val_set, 'test': test_set, 'nc': nc, 'names': names}
+
+    return loaded_datasets
 
 
 class HUBDatasetStats:

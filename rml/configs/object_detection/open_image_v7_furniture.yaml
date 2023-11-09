@@ -1,4 +1,4 @@
-data_dir: /Users/phamvy/Projects/dataset/furniture_dataset
+data_dir: /Users/phamvy/Projects/dataset/furniture/open_images
 mapping_id:
   0: 0
   1: 1
@@ -28,16 +28,15 @@ mapping_id:
   25: 23
   26: 23
   27: 24
-  28: 25
-  29: 26
-  30: 27
-  31: 28
-  32: 1
-  33: 30
-  34: 31
-  35: 32
-  36: 33
-  37: 34
+  28: 12
+  29: 25
+  30: 26
+  31: 27
+  32: 28
+  33: 29
+  34: 30
+  35: 31
+  36: 32
 mapping_names:
   0: lamp
   1: cupboard
@@ -64,25 +63,24 @@ mapping_names:
   22: bathtub
   23: kitchenware (non-electrical)
   24: kitchen_appliance (electrical)
-  25: bidet
-  26: nightstand
-  27: heater
-  28: piano
-  29: coffee_table
-  30: coffeemaker
-  31: closet
-  32: bathroom_accessory
-  33: dishwasher
-  34: fan
-  35: vacuum_cleaner
-  36: water_heater
-  37: kitchen_cabinet
-  38: makeup_table
-  39: bed
-  40: basin
-  41: kitchen_hood
-  42: fire_detector
-  43: air_conditioner
+  25: nightstand
+  26: heater
+  27: piano
+  28: coffee_table
+  29: coffeemaker
+  30: closet
+  31: bathroom_accessory
+  32: dishwasher
+  33: fan
+  34: vacuum_cleaner
+  35: water_heater
+  36: kitchen_cabinet
+  37: makeup_table
+  38: bed
+  39: basin
+  40: kitchen_hood
+  41: fire_detector
+  42: air_conditioner
 names:
   0: Lamp
   1: Cupboard
@@ -116,12 +114,11 @@ names:
   29: Nightstand
   30: Heater
   31: Piano
-  32: Cupboard
-  33: Coffee table
-  34: Coffeemaker
-  35: Closet
-  36: Bathroom accessory
-  37: Dishwasher
+  32: Coffee table
+  33: Coffeemaker
+  34: Closet
+  35: Bathroom accessory
+  36: Dishwasher
 test: null
 train: train/images/
 using_mapping: true

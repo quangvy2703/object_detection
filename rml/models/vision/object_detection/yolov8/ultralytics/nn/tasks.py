@@ -7,16 +7,28 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
-from rml.models.vision.object_detection.yolov8.ultralytics.nn.modules import (AIFI, C1, C2, C3, C3TR, SPP, SPPF, Bottleneck, BottleneckCSP, C2f, C3Ghost, C3x,
-                                                                              Classify, Concat, Conv, Conv2, ConvTranspose, Detect, DWConv, DWConvTranspose2d,
-                                                                              Focus, GhostBottleneck, GhostConv, HGBlock, HGStem, Pose, RepC3, RepConv,
+from rml.models.vision.object_detection.yolov8.ultralytics.nn.modules import (AIFI, C1, C2, C3, C3TR, SPP, SPPF,
+                                                                              Bottleneck, BottleneckCSP, C2f, C3Ghost,
+                                                                              C3x,
+                                                                              Classify, Concat, Conv, Conv2,
+                                                                              ConvTranspose, Detect, DWConv,
+                                                                              DWConvTranspose2d,
+                                                                              Focus, GhostBottleneck, GhostConv,
+                                                                              HGBlock, HGStem, Pose, RepC3, RepConv,
                                                                               RTDETRDecoder, Segment)
-from rml.models.vision.object_detection.yolov8.ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
-from rml.models.vision.object_detection.yolov8.ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
-from rml.models.vision.object_detection.yolov8.ultralytics.utils.loss import v8ClassificationLoss, v8DetectionLoss, v8PoseLoss, v8SegmentationLoss
+from rml.models.vision.object_detection.yolov8.ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, \
+    colorstr, emojis, yaml_load
+from rml.models.vision.object_detection.yolov8.ultralytics.utils.checks import check_requirements, check_suffix, \
+    check_yaml
+from rml.models.vision.object_detection.yolov8.ultralytics.utils.loss import v8ClassificationLoss, v8DetectionLoss, \
+    v8PoseLoss, v8SegmentationLoss
 from rml.models.vision.object_detection.yolov8.ultralytics.utils.plotting import feature_visualization
-from rml.models.vision.object_detection.yolov8.ultralytics.utils.torch_utils import (fuse_conv_and_bn, fuse_deconv_and_bn, initialize_weights, intersect_dicts,
-                                                                                     make_divisible, model_info, scale_img, time_sync)
+from rml.models.vision.object_detection.yolov8.ultralytics.utils.torch_utils import (fuse_conv_and_bn,
+                                                                                     fuse_deconv_and_bn,
+                                                                                     initialize_weights,
+                                                                                     intersect_dicts,
+                                                                                     make_divisible, model_info,
+                                                                                     scale_img, time_sync)
 
 try:
     import thop
@@ -555,29 +567,32 @@ def torch_safe_load(weight):
     Returns:
         (dict): The loaded PyTorch model.
     """
-    from rml.models.vision.object_detection.yolov8.ultralytics.utils.downloads import attempt_download_asset
+    from ultralytics.utils.downloads import attempt_download_asset
 
     check_suffix(file=weight, suffix='.pt')
     file = attempt_download_asset(weight)  # search online if missing locally
     try:
         with temporary_modules({
-                'rml.vision.object_detection.models.yolov8.ultralytics.yolo.utils': 'rml.vision.object_detection.models.yolov8.ultralytics.utils',
-                'rml.vision.object_detection.models.yolov8.ultralytics.yolo.v8': 'rml.vision.object_detection.models.yolov8.ultralytics.models.yolo',
-                'rml.vision.object_detection.models.yolov8.ultralytics.yolo.data': 'rml.vision.object_detection.models.yolov8.ultralytics.data'}):  # for legacy 8.0 Classify and Pose models
+            'ultralytics.yolo.utils': 'ultralytics.utils',
+            'ultralytics.yolo.v8': 'ultralytics.models.yolo',
+            'ultralytics.yolo.data': 'ultralytics.data'}
+        ):  # for legacy 8.0 Classify and Pose models
             return torch.load(file, map_location='cpu'), file  # load
 
     except ModuleNotFoundError as e:  # e.name is missing module name
         if e.name == 'models':
             raise TypeError(
-                emojis(f'ERROR ❌️ {weight} appears to be an rml.vision.object_detection.models.yolov8.ultralytics YOLOv5 model originally trained '
-                       f'with https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/yolov5.\nThis model is NOT forwards compatible with '
-                       f'YOLOv8 at https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/rml.vision.object_detection.models.yolov8.ultralytics.'
-                       f"\nRecommend fixes are to train a new model using the latest 'rml.vision.object_detection.models.yolov8.ultralytics' package or to "
-                       f"run a command with an official YOLOv8 model, i.e. 'yolo predict model=yolov8n.pt'")) from e
-        LOGGER.warning(f"WARNING ⚠️ {weight} appears to require '{e.name}', which is not in rml.vision.object_detection.models.yolov8.ultralytics requirements."
-                       f"\nAutoInstall will run now for '{e.name}' but this feature will be removed in the future."
-                       f"\nRecommend fixes are to train a new model using the latest 'rml.vision.object_detection.models.yolov8.ultralytics' package or to "
-                       f"run a command with an official YOLOv8 model, i.e. 'yolo predict model=yolov8n.pt'")
+                emojis(
+                    f'ERROR ❌️ {weight} appears to be an rml.vision.object_detection.models.yolov8.ultralytics YOLOv5 model originally trained '
+                    f'with https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/yolov5.\nThis model is NOT forwards compatible with '
+                    f'YOLOv8 at https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/rml.vision.object_detection.models.yolov8.ultralytics.'
+                    f"\nRecommend fixes are to train a new model using the latest 'rml.vision.object_detection.models.yolov8.ultralytics' package or to "
+                    f"run a command with an official YOLOv8 model, i.e. 'yolo predict model=yolov8n.pt'")) from e
+        LOGGER.warning(
+            f"WARNING ⚠️ {weight} appears to require '{e.name}', which is not in rml.vision.object_detection.models.yolov8.ultralytics requirements."
+            f"\nAutoInstall will run now for '{e.name}' but this feature will be removed in the future."
+            f"\nRecommend fixes are to train a new model using the latest 'rml.vision.object_detection.models.yolov8.ultralytics' package or to "
+            f"run a command with an official YOLOv8 model, i.e. 'yolo predict model=yolov8n.pt'")
         check_requirements(e.name)  # install missing module
 
         return torch.load(file, map_location='cpu'), file  # load
@@ -735,7 +750,8 @@ def yaml_model_load(path):
     path = Path(path)
     if path.stem in (f'yolov{d}{x}6' for x in 'nsmlx' for d in (5, 8)):
         new_stem = re.sub(r'(\d+)([nslmx])6(.+)?$', r'\1\2-p6\3', path.stem)
-        LOGGER.warning(f'WARNING ⚠️ rml.vision.object_detection.models.yolov8.ultralytics YOLO P6 models now use -p6 suffix. Renaming {path.stem} to {new_stem}.')
+        LOGGER.warning(
+            f'WARNING ⚠️ rml.vision.object_detection.models.yolov8.ultralytics YOLO P6 models now use -p6 suffix. Renaming {path.stem} to {new_stem}.')
         path = path.with_name(new_stem + path.suffix)
 
     unified_path = re.sub(r'(\d+)([nslmx])(.+)?$', r'\1\3', str(path))  # i.e. yolov8x.yaml -> yolov8.yaml

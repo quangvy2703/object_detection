@@ -1,43 +1,43 @@
-data_dir: /Users/phamvy/Desktop/rever
+data_dir: /Users/phamvy/Projects/dataset/furniture/rever
 mapping_id:
   0: -1
   1: -1
   2: 14
   3: -1
-  4: 35
+  4: 34
   5: -1
   6: 2
-  7: 36
+  7: 34
   8: 4
   9: 4
   10: 2
-  11: 37
-  12: 34
-  13: 30
+  11: 35
+  12: 32
+  13: 28
   14: 13
   15: 6
   16: -1
   17: -1
   18: -1
-  19: 38
-  20: 38
+  19: 36
+  20: 26
   21: -1
   22: -1
   23: -1
   24: 3
-  25: 32
+  25: 2
   26: 1
   27: 0
   28: -1
-  29: 39
+  29: 37
   30: 4
-  31: 40
+  31: 38
   32: -1
   33: 10
-  34: 25
+  34: 12
   35: -1
   36: 15
-  37: 41
+  37: 39
   38: 21
   39: 22
   40: 14
@@ -45,14 +45,14 @@ mapping_id:
   42: 14
   43: 9
   44: 16
-  45: 42
+  45: 40
   46: 7
   47: 8
   48: -1
   49: -1
-  50: 43
+  50: -1
   51: 17
-  52: 44
+  52: 42
   53: 11
   54: 20
 mapping_names:
@@ -81,25 +81,24 @@ mapping_names:
   22: bathtub
   23: kitchenware (non-electrical)
   24: kitchen_appliance (electrical)
-  25: bidet
-  26: nightstand
-  27: heater
-  28: piano
-  29: coffee_table
-  30: coffeemaker
-  31: closet
-  32: bathroom_accessory
-  33: dishwasher
-  34: fan
-  35: vacuum_cleaner
-  36: water_heater
-  37: kitchen_cabinet
-  38: makeup_table
-  39: bed
-  40: basin
-  41: kitchen_hood
-  42: fire_detector
-  43: air_conditioner
+  25: nightstand
+  26: heater
+  27: piano
+  28: coffee_table
+  29: coffeemaker
+  30: closet
+  31: bathroom_accessory
+  32: dishwasher
+  33: fan
+  34: vacuum_cleaner
+  35: water_heater
+  36: kitchen_cabinet
+  37: makeup_table
+  38: bed
+  39: basin
+  40: kitchen_hood
+  41: fire_detector
+  42: air_conditioner
 names:
   0: Invalid Image
   1: UNKNOWN

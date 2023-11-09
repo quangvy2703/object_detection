@@ -36,15 +36,23 @@ class ClassificationTrainer(BaseTrainer):
         overrides['task'] = 'classify'
         if overrides.get('imgsz') is None:
             overrides['imgsz'] = 224
+
         super().__init__(cfg, overrides, _callbacks)
 
     def set_model_attributes(self):
         """Set the YOLO model's class names from the loaded dataset."""
-        self.model.names = self.data['names']
+        model_names = [data["names"] for _, data in self.data.items()]
+        assert all(model_name == model_names[0] for model_name in model_names) is True,\
+            "class names is not mismatch between datasets"
+
+        self.model.names = model_names[0]
 
     def get_model(self, cfg=None, weights=None, verbose=True):
         """Returns a modified PyTorch model configured for training YOLO."""
-        model = ClassificationModel(cfg, nc=self.data['nc'], verbose=verbose and RANK == -1)
+
+        nc = [self.data[data]['nc'] for data in self.data]
+        assert all(i == nc[0] for i in nc) is True, "number of classes (nc) is not mismatch between datasets"
+        model = ClassificationModel(cfg, nc=nc[0], verbose=verbose and RANK == -1)
         if weights:
             model.load(weights)
 
@@ -78,14 +86,14 @@ class ClassificationTrainer(BaseTrainer):
 
         return ckpt
 
-    def build_dataset(self, img_path, mode='train', batch=None):
+    def build_dataset(self, datasets, mode='train', batch=None):
         """Creates a ClassificationDataset instance given an image path, and mode (train/test etc.)."""
-        return ClassificationDataset(root=img_path, args=self.args, augment=mode == 'train', prefix=mode)
+        return ClassificationDataset(datasets=datasets, args=self.args, augment=mode == 'train', prefix=mode)
 
-    def get_dataloader(self, dataset_paths, batch_size=16, rank=0, mode='train'):
+    def get_dataloader(self, datasets, batch_size=16, rank=0, mode='train'):
         """Returns PyTorch DataLoader with transforms to preprocess images for inference."""
         with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
-            dataset = self.build_dataset(dataset_paths, mode)
+            dataset = self.build_dataset(datasets, mode)
 
         loader = build_dataloader(dataset, batch_size, self.args.workers, rank=rank)
         # Attach inference transforms
