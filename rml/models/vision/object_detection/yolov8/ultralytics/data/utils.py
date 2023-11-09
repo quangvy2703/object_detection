@@ -116,22 +116,23 @@ def verify_image_label(args):
             lb = [x.split() for x in f.read().strip().splitlines() if len(x)]
 
             # print(lb)
-            lb_holder = []
-            for _lb in lb:
-                try:
-                    if int(label_id_mapping[data_dir][int(_lb[0])]) != -1:
-                        lb_holder.append(copy.deepcopy(_lb))
-                        lb_holder[-1][0] = int(label_id_mapping[data_dir][int(_lb[0])])
-                except Exception as e:
-                    print(lb_file)
-                    print(label_id_mapping)
-                    print(lb)
-                    print(data_dir)
-                    print(_lb, int(_lb[0]))
-                    raise e
-            if len(lb_holder) == 0:
-                return [None, None, None, None, None, nm, nf, ne, nc, msg]
-            lb = lb_holder
+            if label_id_mapping is not None:
+                lb_holder = []
+                for _lb in lb:
+                    try:
+                        if int(label_id_mapping[data_dir][int(_lb[0])]) != -1:
+                            lb_holder.append(copy.deepcopy(_lb))
+                            lb_holder[-1][0] = int(label_id_mapping[data_dir][int(_lb[0])])
+                    except Exception as e:
+                        print(lb_file)
+                        print(label_id_mapping)
+                        print(lb)
+                        print(data_dir)
+                        print(_lb, int(_lb[0]))
+                        raise e
+                if len(lb_holder) == 0:
+                    return [None, None, None, None, None, nm, nf, ne, nc, msg]
+                lb = lb_holder
 
             if any(len(x) > 6 for x in lb) and (not keypoint):  # is segment
                 classes = np.array([x[0] for x in lb], dtype=np.float32)
