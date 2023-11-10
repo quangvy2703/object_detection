@@ -91,6 +91,10 @@ class YOLOv8ModelLoader(ModelLoader):
         results = self.model.predict(source=inference_input.images, show=show, save=save)
         return results
 
+    def validate(self):
+        metrics = self.model.val()
+        print(metrics)
+
     def export(self, format="onnx"):
         return self.model.export(format=format)
 
