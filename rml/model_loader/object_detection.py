@@ -94,8 +94,9 @@ class YOLOv8ModelLoader(ModelLoader):
     def validate(self):
         metrics = self.model.val()
         print(metrics)
+        return metrics
 
-    def export(self, format="onnx"):
+    def export(self, format="torchscript"):
         return self.model.export(format=format)
 
     def _load(
