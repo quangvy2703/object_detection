@@ -58,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default='rml/data/models/yolov8n.pt',
+        default='/content/drive/MyDrive/models/furniture_train/weights/last.pt',
         # metavar="N",
         help="pretrained model path",
     )
@@ -114,6 +114,15 @@ if __name__ == "__main__":
         # metavar="N",
         help="output directory",
     )
+
+    parser.add_argument(
+        "--resume",
+        type=bool,
+        default="/content/drive/MyDrive/models/furniture_train",
+        # metavar="N",
+        help="output directory",
+    )
+
 
     parser.add_argument(
         "--metrics",

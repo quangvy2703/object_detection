@@ -1,3 +1,9 @@
+path: ../room_type/rever  # dataset root dir
+train: train  # train images (relative to 'path') 1281167 images
+val: val  # val images (relative to 'path') 50000 images
+test:  # test images (optional)
+
+
 mapping_id:
   0: 9
   1: 0

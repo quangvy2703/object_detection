@@ -6,7 +6,7 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import Dict
 import yaml
-
+from tqdm import tqdm
 import cv2
 import numpy as np
 import torch
@@ -244,15 +244,20 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
             augment (bool, optional): True if dataset should be augmented, False otherwise. Defaults to False.
             cache (bool | str | optional): Cache setting, can be True, False, 'ram' or 'disk'. Defaults to False.
         """
-        self.all_samples = []
+        all_samples = []
         for root, config_path in datasets.items():
-            if os.path.exists(args.data[str(root)]):
-                data_config = load_data_config(args.data[str(root)])
-                if data_config.get('using_mapping', False) is True:
-                    self.class_id_mapping = data_config.get('mapping_id')
+            if os.path.exists(os.path.join(args.data[str(root)], prefix)):
+                self.data_config = load_data_config(args.data[str(root)])
+                if self.data_config.get('using_mapping', False) is True:
+                    self.class_id_mapping = self.data_config.get('mapping_id')
+                    self.names = self.data_config["names"]
                 else:
                     self.class_id_mapping = None
-            super().__init__(root=root)
+                    self.names = None
+
+            super().__init__(root=os.path.join(str(root), prefix))
+            self.samples = self._map_class_id()
+            # print(self.samples)
             if augment and args.fraction < 1.0:  # reduce training fraction
                 self.samples = self.samples[:round(len(self.samples) * args.fraction)]
             self.prefix = colorstr(f'{prefix}: ') if prefix else ''
@@ -260,7 +265,10 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
             self.cache_disk = cache == 'disk'
             self.samples = self.verify_images()  # filter out bad images
             self.samples = [list(x) + [Path(x[0]).with_suffix('.npy'), None] for x in self.samples]  # file, index, npy, im
-            self.all_samples.extend(self.samples)
+
+            all_samples.extend(self.samples)
+        self.samples = all_samples
+        del all_samples
 
         self.torch_transforms = classify_transforms(args.imgsz, rect=args.rect)
         self.album_transforms = classify_albumentations(
@@ -275,6 +283,31 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
             mean=(0.0, 0.0, 0.0),  # IMAGENET_MEAN
             std=(1.0, 1.0, 1.0),  # IMAGENET_STD
             auto_aug=False) if augment else None
+
+    def _map_class_id(self):
+        idx_to_class = dict([(idx, class_name) for class_name, idx in self.class_to_idx.items()])
+        pre_defined_class_to_id = dict([(class_name, idx) for idx, class_name in self.data_config["names"]])
+        mapped_samples = []
+        for sample_idx, sample in tqdm(enumerate(self.samples)):
+            mapped_id = self._get_mapping_id(
+                class_id=sample[1],
+                idx_to_class=idx_to_class,
+                pre_defined_class_to_id=pre_defined_class_to_id
+            )
+            if mapped_id != -1:
+                mapped_samples.append(
+                    (sample[0], mapped_id)
+                )
+        return mapped_samples
+
+    def _get_mapping_id(
+            self,
+            class_id: int,
+            idx_to_class: Dict[int, str],
+            pre_defined_class_to_id: Dict[str, int]
+    ) -> int:
+        pre_defined_class_id = pre_defined_class_to_id[idx_to_class[class_id]]
+        return self.data_config["mapping_id"][pre_defined_class_id]
 
     def __getitem__(self, i):
         """Returns subset of data and targets corresponding to given indices."""

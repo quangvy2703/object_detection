@@ -1,59 +1,14 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
-# Open Images v7 dataset https://storage.googleapis.com/openimages/web/index.html by Google
-# Example usage: yolo train data=open-images-v7.yaml
-# parent
-# ├── ultralytics
-# └── datasets
-#     └── open-images-v7  ← downloads here (561 GB)
-
-
-# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-path: /Users/phamvy/Projects/dataset/room_type_dataset  # dataset root dir
-train: images/train  # train images (relative to 'path') 1743042 images
-val: images/valid  # val images (relative to 'path') 41620 images
-test:  # test images (optional)
-
-# Classes
-names:
-  0: Lamp
-  1: Cupboard
-  2: Cabinetry
-  3: Wardrobe
-  4: Pillow
-  5: Bathroom cabinet
-  6: Kitchen & dining room table
-  7: Gas stove
-  8: Washing machine
-  9: Chair
-  10: Mirror
-  11: Microwave oven
-  12: Toilet
-  13: Sofa bed
-  14: Couch
-  15: Shelf
-  16: Sink
-  17: Table
-  18: Desk
-  19: Refrigerator
-  20: Television
-  21: Refrigerator
-  22: Ceiling fan
-  23: Oven
-  24: Shower
-  25: Bathtub
-  26: Kitchen utensil
-  27: Kitchenware
-  28: Kitchen appliance
-  29: Home appliance
-  30: Bidet
-  31: Nightstand
-  32: Heater
-  33: Piano
-  34: Infant bed
-  35: Cupboard
-  36: Coffee table
-  37: Television
-  38: Coffeemaker
-  39: Closet
-  40: Bathroom accessory
-  41: Dishwasher
+classes:
+  0: bathroom/toilet
+  1: bedroom
+  2: closet
+  3: corridor
+  4: dining_room
+  5: kitchen
+  6: laundry_room
+  7: living_room
+  8: staircase
+  9: balcony
+  10: terrace
+  11: working_room
+  12: tabernacle_room

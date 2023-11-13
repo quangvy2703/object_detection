@@ -11,19 +11,20 @@ def main(args):
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path=args.pretrained_path
     )
-    train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
-    args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
-    args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
+    # train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
+    # args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
+    # args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
+    #
+    # model_loader.train(**args)
 
-    model_loader.train(**args)
-
-    model.train(
+    model_loader.model.train(
         data={
-            '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml"
+            '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml",
+            # '/Users/phamvy/Projects/dataset/room_type/MIT_indoor_scenes': "rml/configs/image_classification/mit_indoor_scenes.yaml"
         },
         epochs=100,
-        imgsz=640,
-        save_dir="runs"
+        imgsz=256,
+        save_dir="runs/room_model"
     )
 
     # if hasattr(args, "remote_save_dir"):
