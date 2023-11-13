@@ -110,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="/Users/phamvy/Projects/source/RML/rml",
+        default="/content/drive/MyDrive/models/furniture_train",
         # metavar="N",
         help="output directory",
     )
