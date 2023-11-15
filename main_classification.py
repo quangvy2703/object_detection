@@ -18,6 +18,7 @@ def main(args):
         epochs=args.epochs,
         imgsz=args.imgsz,
         save_dir=args.save_dir,
+        batch=args.batch
     )
 
     # args.data = json.loads(args.data)
