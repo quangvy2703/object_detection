@@ -11,21 +11,26 @@ def main(args):
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path=args.pretrained_path
     )
-    # train_configs = YOLOv8ModelLoader.load_training_config(args.train_config_path)
-    # args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(',')]
-    # args.data_dirs = [item.strip() for item in args.data_dirs.split(',')]
-    #
-    # model_loader.train(**args)
-
+    print(args.data)
+    args.data = json.loads(args.data)
     model_loader.model.train(
-        data={
-            '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml",
-            # '/Users/phamvy/Projects/dataset/room_type/MIT_indoor_scenes': "rml/configs/image_classification/mit_indoor_scenes.yaml"
-        },
-        epochs=100,
-        imgsz=256,
-        save_dir="runs/room_model"
+        data=args.data,
+        epochs=args.epochs,
+        imgsz=args.imgsz,
+        save_dir=args.save_dir,
     )
+
+    # args.data = json.loads(args.data)
+    # model_loader.model.train(
+    #
+    #     data={
+    #         '/Users/phamvy/Projects/dataset/room_type/rever': "rml/configs/image_classification/rever_rooms.yaml",
+    #         # '/Users/phamvy/Projects/dataset/room_type/MIT_indoor_scenes': "rml/configs/image_classification/mit_indoor_scenes.yaml"
+    #     },
+    #     epochs=100,
+    #     imgsz=256,
+    #     save_dir="runs/room_model"
+    # )
 
     # if hasattr(args, "remote_save_dir"):
     #     OnTrainEnd(
@@ -72,9 +77,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--project",
         type=str,
-        default="furniture-detection",
+        default="room_classification",
         # metavar="N",
         help="",
+    )
+
+    parser.add_argument(
+        "--imgsz", type=int, default=256, metavar="", help="image size (default: 0.01)"
     )
 
     parser.add_argument(
@@ -85,30 +94,16 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--training_data_config_paths",
+        "--data",
         type=str,
         # metavar="N",
         help="training datasets configs",
     )
 
     parser.add_argument(
-        "--train_config_path",
-        type=str,
-        # metavar="N",
-        help="training configs",
-    )
-
-    parser.add_argument(
-        "--data_dirs",
-        type=str,
-        # metavar="N",
-        help="data directory",
-    )
-
-    parser.add_argument(
         "--save_dir",
         type=str,
-        default="/Users/phamvy/Projects/source/RML/rml",
+        default="runs/trained",
         # metavar="N",
         help="output directory",
     )
