@@ -246,14 +246,17 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
         """
         all_samples = []
         for root, config_path in datasets.items():
-            if os.path.exists(os.path.join(args.data[str(root)], prefix)):
-                self.data_config = load_data_config(args.data[str(root)])
-                if self.data_config.get('using_mapping', False) is True:
-                    self.class_id_mapping = self.data_config.get('mapping_id')
-                    self.names = self.data_config["names"]
-                else:
-                    self.class_id_mapping = None
-                    self.names = None
+            print(os.path.join(args.data[str(root)], prefix))
+
+            self.data_config = load_data_config(args.data[str(root)])
+            print("data_config", self.data_config)
+
+            if self.data_config.get('using_mapping', False) is True:
+                self.class_id_mapping = self.data_config.get('mapping_id')
+                self.names = self.data_config["names"]
+            else:
+                self.class_id_mapping = None
+                self.names = None
 
             super().__init__(root=os.path.join(str(root), prefix))
             self.samples = self._map_class_id()
@@ -286,7 +289,7 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
 
     def _map_class_id(self):
         idx_to_class = dict([(idx, class_name) for class_name, idx in self.class_to_idx.items()])
-        pre_defined_class_to_id = dict([(class_name, idx) for idx, class_name in self.data_config["names"]])
+        pre_defined_class_to_id = dict([(class_name, idx) for idx, class_name in self.data_config["names"].items()])
         mapped_samples = []
         for sample_idx, sample in tqdm(enumerate(self.samples)):
             mapped_id = self._get_mapping_id(
