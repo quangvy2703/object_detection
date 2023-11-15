@@ -591,13 +591,13 @@ class BaseTrainer:
         with open(self.csv, 'a') as f:
             f.write(s + ('%23.5g,' * n % tuple([self.epoch + 1] + vals)).rstrip(',') + '\n')
 
-        saved_metrics = dict(zip(
-            [metric for metric in self.args.metrics],
-            [metrics[BaseTrainer.METRIC_MAPPING[metric]] for metric in self.args.metrics],
-        ))
-
-        with open(os.path.join(self.save_dir, "metrics.json"), "w") as f:
-            json.dump(saved_metrics, f)
+        # saved_metrics = dict(zip(
+        #     [metric for metric in self.args.metrics],
+        #     [metrics[BaseTrainer.METRIC_MAPPING[metric]] for metric in self.args.metrics],
+        # ))
+        #
+        # with open(os.path.join(self.save_dir, "metrics.json"), "w") as f:
+        #     json.dump(saved_metrics, f)
 
     def plot_metrics(self):
         """Plot and display metrics visually."""
