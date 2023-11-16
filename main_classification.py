@@ -18,7 +18,8 @@ def main(args):
         epochs=args.epochs,
         imgsz=args.imgsz,
         save_dir=args.save_dir,
-        batch=args.batch
+        batch=args.batch,
+        resume=args.resume
     )
 
     # args.data = json.loads(args.data)
@@ -100,6 +101,14 @@ if __name__ == "__main__":
         # metavar="N",
         help="training datasets configs",
     )
+
+    parser.add_argument(
+        "--resume",
+        type=bool,
+        # metavar="N",
+        help="resume training",
+    )
+
 
     parser.add_argument(
         "--save_dir",
