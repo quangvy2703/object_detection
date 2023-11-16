@@ -82,7 +82,7 @@ class ClassificationTrainer(BaseTrainer):
             self.model = torchvision.models.__dict__[model](weights='IMAGENET1K_V1' if self.args.pretrained else None)
         else:
             FileNotFoundError(f'ERROR: model={model} not found locally or online. Please check model name.')
-        ClassificationModel.reshape_outputs(self.model, self.data.values()[0]['nc'])
+        ClassificationModel.reshape_outputs(self.model, list(self.data.values())[0]['nc'])
 
         return ckpt
 
