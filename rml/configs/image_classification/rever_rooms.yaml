@@ -19,7 +19,7 @@ mapping_id:
   11: 12
   12: 10
   13: 0
-  14: -1
+  14: 13
   15: 2
   16: 11
 mapping_names:
@@ -36,6 +36,7 @@ mapping_names:
   10: terrace
   11: working_room
   12: tabernacle_room
+  13: undefined
 names:
   0: balcony
   1: bathroom
