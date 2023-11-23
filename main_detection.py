@@ -132,6 +132,14 @@ if __name__ == "__main__":
         help="using metrics",
     )
 
+    parser.add_argument(
+        "--device",
+        type=int,
+        default=0,
+        # metavar="N",
+        help="using metrics",
+    )
+
     main(parser.parse_args())
 
     # detected = model_loader.inference(
