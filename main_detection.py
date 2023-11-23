@@ -116,15 +116,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--resume",
-        type=bool,
-        default="/content/drive/MyDrive/models/furniture_train",
-        # metavar="N",
-        help="output directory",
-    )
-
-
-    parser.add_argument(
         "--metrics",
         type=str,
         default="precisionphamquangvyrecallphamquangvyaverage_precision",
