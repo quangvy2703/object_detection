@@ -3,7 +3,7 @@
 
 
 epochs: 100  # (int) number of epochs to train for
-patience: 50  # (int) epochs to wait for no observable improvement for early stopping of training
+patience: 10  # (int) epochs to wait for no observable improvement for early stopping of training
 batch: 32  # (int) number of images per batch (-1 for AutoBatch)
 imgsz: 640  # (int | list) input images size as int for train and val modes, or list[w,h] for predict and export modes
 save: True  # (bool) save train checkpoints and predict results
@@ -21,7 +21,7 @@ seed: 0  # (int) random seed for reproducibility
 deterministic: True  # (bool) whether to enable deterministic mode
 single_cls: False  # (bool) train multi-class data as single-class
 rect: False  # (bool) rectangular training if mode='train' or rectangular validation if mode='val'
-cos_lr: False  # (bool) use cosine learning rate scheduler
+cos_lr: True  # (bool) use cosine learning rate scheduler
 close_mosaic: 10  # (int) disable mosaic augmentation for final epochs (0 to disable)
 resume: False  # (bool) resume training from last checkpoint
 amp: True  # (bool) Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check
@@ -68,7 +68,7 @@ boxes: True  # (bool) Show boxes in segmentation predictions
 
 # Export settings ------------------------------------------------------------------------------------------------------
 format: torchscript  # (str) format to export to, choices at https://docs.ultralytics.com/modes/export/#export-formats
-keras: False  # (bool) use Kera=s
+keras: False  # (bool) use Keras
 optimize: False  # (bool) TorchScript: optimize for mobile
 int8: False  # (bool) CoreML/TF INT8 quantization
 dynamic: False  # (bool) ONNX/TF/TensorRT: dynamic axes
@@ -103,6 +103,6 @@ perspective: 0.0  # (float) image perspective (+/- fraction), range 0-0.001
 flipud: 0.0  # (float) image flip up-down (probability)
 fliplr: 0.5  # (float) image flip left-right (probability)
 mosaic: 1.0  # (float) image mosaic (probability)
-mixup: 0.0  # (float) image mixup (probability)
+mixup: 0.3  # (float) image mixup (probability)
 copy_paste: 0.0  # (float) segment copy-paste (probability)
 
