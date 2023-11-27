@@ -160,12 +160,12 @@ class YOLOv8ModelLoader(ModelLoader):
             scores[mapping_names[label_id]] = ClassificationScore(
                 precision=ScoreEvaluator.precisions(true_labels, predicted_labels),
                 recall=ScoreEvaluator.recalls(true_labels, predicted_labels),
-                accuracy=ScoreEvaluator.recalls(true_labels, predicted_labels)
+                accuracy=ScoreEvaluator.accuracy(true_labels, predicted_labels)
             )
         scores[ScoreEvaluator.OVERALL] = ClassificationScore(
             precision=ScoreEvaluator.precisions(overall_true_labels, overall_predicted_labels),
             recall=ScoreEvaluator.recalls(overall_true_labels, overall_predicted_labels),
-            accuracy=ScoreEvaluator.recalls(overall_true_labels, overall_predicted_labels)
+            accuracy=ScoreEvaluator.accuracy(overall_true_labels, overall_predicted_labels)
         )
 
         return scores
