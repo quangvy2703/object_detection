@@ -2,7 +2,7 @@ import argparse
 import os
 import json
 
-from rml.model_loader.object_detection import YOLOv8ModelLoader
+from rml.model_loader.yolov8 import YOLOv8ModelLoader
 from rml.utils.on_train_end import OnTrainEnd
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default='/content/drive/MyDrive/models/furniture_train/weights/last.pt',
+        default=None,
         # metavar="N",
         help="pretrained model path",
     )

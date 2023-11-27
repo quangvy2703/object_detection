@@ -5,6 +5,7 @@ from typing import List, Dict
 from tqdm import tqdm
 
 from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
+from rml.models.vision.object_detection.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
 
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
@@ -19,7 +20,6 @@ class YOLOv8ModelLoader(ModelLoader):
 
     @staticmethod
     def from_pretrained(model_path: str, task: str):
-        print("YOLOv8ModelLoader", model_path, task)
         return YOLOv8ModelLoader(
             pretrained_model_path=model_path,
             task=task
@@ -51,22 +51,13 @@ class YOLOv8ModelLoader(ModelLoader):
     ):
         def check_valid_update(
                 data_config_files: List[str],
-                data_dirs: List[str] = None,
-                # trains: List[str] = None,
-                # vals: List[str] = None,
-                # tests: List[str] = None
+                data_dirs: List[str] = None
         ):
             num_data_config_files = len(data_config_files)
             if num_data_config_files > 1:
                 if data_dirs:
                     assert len(data_dirs) == num_data_config_files, \
                         "Multiple datasets training, num of updated paths must be equal to num of data_config_files"
-                # if trains:
-                #     assert len(trains) == num_data_config_files - 1, "Multiple datasets training, num of updated trains must be equal to num of data_config_files - 1"
-                # if vals:
-                #     assert len(vals) == num_data_config_files - 1, "Multiple datasets training, num of updated vals must be equal to num of data_config_files - 1"
-                # if tests:
-                #     assert len(tests) == num_data_config_files - 1, "Multiple datasets training, num of updated tests must be equal to num of data_config_files - 1"
 
         try:
             check_valid_update(data_config_files, data_dirs)
@@ -94,7 +85,6 @@ class YOLOv8ModelLoader(ModelLoader):
         self.model = self._load(self.model_config_path, self.pretrained_model_path, task)
 
     def train(self, training_data_config_paths: List[str], train_configs: dict):
-        # training_config = YOLOv8ModelLoader.load_training_config(train_config_path)
         self.model.train(data=training_data_config_paths, **train_configs)
 
     def inference(self, inference_input: ObjectDetectionInferenceInput, show: bool = False, save: bool = False):
@@ -118,11 +108,64 @@ class YOLOv8ModelLoader(ModelLoader):
             for label, score in scores.items():
                 print(label, score.to_dict())
             return scores
+        elif self.task == YOLOv8ModelLoader.DETECTION:
+            # validator = DetectionValidator()
+            scores = self.model.val()
+            print(scores)
 
     def export(self, format="torchscript"):
         return self.model.export(format=format)
 
     def _validate_classify(
+            self,
+            data_dir: str,
+            names: Dict[int, str],
+            mapping_ids: Dict[int, int],
+            mapping_names: Dict[int, str],
+    ) -> Dict[str, ClassificationScore]:
+        reversed_names = {label: label_id for label_id, label in names.items()}
+        labels = os.listdir(data_dir)
+        images = {}
+        for label in labels:
+            if "DS_Store" in label:
+                continue
+            label_id = reversed_names[label]
+            mapped_label_id = mapping_ids[label_id]
+            if mapped_label_id == -1:
+                continue
+            # mapped_label = mapping_names[mapped_label_id]
+            images[mapped_label_id] = [
+                os.path.join(data_dir, label, image)
+                for image in os.listdir(os.path.join(data_dir, label))
+            ]
+
+        scores = {}
+        overall_true_labels = []
+        overall_predicted_labels = []
+        for label_id, label_images in images.items():
+            true_labels = []
+            predicted_labels = []
+            for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
+                true_labels.append(label_id)
+                overall_true_labels.append(label_id)
+                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
+                predicted_labels.append(result[0].probs.top1)
+                overall_predicted_labels.append(result[0].probs.top1)
+
+            scores[mapping_names[label_id]] = ClassificationScore(
+                precision=ScoreEvaluator.precisions(true_labels, predicted_labels),
+                recall=ScoreEvaluator.recalls(true_labels, predicted_labels),
+                accuracy=ScoreEvaluator.accuracy(true_labels, predicted_labels)
+            )
+        scores[ScoreEvaluator.OVERALL] = ClassificationScore(
+            precision=ScoreEvaluator.precisions(overall_true_labels, overall_predicted_labels),
+            recall=ScoreEvaluator.recalls(overall_true_labels, overall_predicted_labels),
+            accuracy=ScoreEvaluator.accuracy(overall_true_labels, overall_predicted_labels)
+        )
+
+        return scores
+
+    def _validate_detect(
             self,
             data_dir: str,
             names: Dict[int, str],

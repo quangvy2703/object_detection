@@ -66,7 +66,6 @@ class YOLODataset(BaseDataset):
                 label_id_mapping[_data["data_dir"].stem] = _data.get('mapping_id', None)
             else:
                 label_id_mapping = None
-        print("label_id_mapping", label_id_mapping)
         # for _data in self.data:
         desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
         nkpt, ndim = _data.get('kpt_shape', (0, 0))
