@@ -8,6 +8,7 @@ from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 
 def main(args):
+    print(args)
     model_loader = YOLOv8ModelLoader.from_pretrained(
         model_path=args.pretrained_path,
         task=YOLOv8ModelLoader.DETECTION
