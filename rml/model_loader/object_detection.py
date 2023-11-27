@@ -134,6 +134,8 @@ class YOLOv8ModelLoader(ModelLoader):
             if "DS_Store" in label:
                 continue
             label_id = reversed_names[label]
+            if label_id == -1:
+                continue
             mapped_label_id = mapping_ids[label_id]
             # mapped_label = mapping_names[mapped_label_id]
             images[mapped_label_id] = [
