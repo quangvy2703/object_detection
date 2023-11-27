@@ -7,13 +7,13 @@ from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 
 model_loader = YOLOv8ModelLoader.from_pretrained(
-    model_path='rml/data/models/best_room_20.torchscript',
+    model_path='/content/drive/MyDrive/models/room_model_2/weights/best.pt',
     task=YOLOv8ModelLoader.CLASSIFY
     # model_path='best.pt'
     # model_path='rml/data/models/yolov8l-furniture.pt'
 )
 
-validation_data_dir = "/Users/phamvy/Projects/dataset/room_type/rever/val"
+validation_data_dir = "/content/room_type/room_type/rever/val"
 names = {
     0: "balcony",
     1: "bathroom",
