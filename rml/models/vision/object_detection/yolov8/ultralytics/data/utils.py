@@ -267,7 +267,7 @@ def find_dataset_yaml(path: Path) -> Path:
     return files[0]
 
 
-def check_det_dataset(datasets, autodownload=True):
+def check_det_dataset(datasets, autodownload=True, extract_dir=None):
     """
     Download, verify, and/or unzip a dataset if not found locally.
 
@@ -276,6 +276,7 @@ def check_det_dataset(datasets, autodownload=True):
     resolves paths related to the dataset.
 
     Args:
+        extract_dir:
         datasets (list[str]): Path to the dataset or dataset descriptor (like a YAML file).
         autodownload (bool, optional): Whether to automatically download the dataset if not found. Defaults to True.
 
@@ -303,7 +304,6 @@ def check_det_dataset(datasets, autodownload=True):
         data = check_file(dataset)
 
         # Download (optional)
-        extract_dir = ''
         if isinstance(data, (str, Path)) and (zipfile.is_zipfile(data) or is_tarfile(data)):
             new_dir = safe_download(data, dir=DATASETS_DIR, unzip=True, delete=False)
             data = find_dataset_yaml(DATASETS_DIR / new_dir)

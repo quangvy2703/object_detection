@@ -102,7 +102,7 @@ class BaseValidator:
         self.callbacks = _callbacks or callbacks.get_default_callbacks()
 
     @smart_inference_mode()
-    def __call__(self, trainer=None, model=None):
+    def __call__(self, trainer=None, model=None, data_dir=None):
         """Supports validation of a pre-trained model if passed or a model being trained if trainer is passed (trainer
         gets priority).
         """
@@ -137,7 +137,7 @@ class BaseValidator:
                 LOGGER.info(f'Forcing batch=1 square inference (1,3,{imgsz},{imgsz}) for non-PyTorch models')
 
             if self._check_valid_datasets(self.args.data):
-                self.data = check_det_dataset(self.args.data)
+                self.data = check_det_dataset(datasets=self.args.data, extract_dir=data_dir)
             elif self.args.task == 'classify':
                 self.data = check_cls_dataset(self.args.data, split=self.args.split)
             else:

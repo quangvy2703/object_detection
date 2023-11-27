@@ -14,7 +14,6 @@ model_loader = YOLOv8ModelLoader.from_pretrained(
 )
 
 
-
 validation_data_dir = "/content/room_type/room_type/rever/val"
 names = {
     0: "balcony",

@@ -263,11 +263,12 @@ class Model(nn.Module):
         kwargs['mode'] = 'track'
         return self.predict(source=source, stream=stream, **kwargs)
 
-    def val(self, validator=None, **kwargs):
+    def val(self, validator=None, data_dir=None, **kwargs):
         """
         Validate a model on a given dataset.
 
         Args:
+            data_dir:
             validator (BaseValidator): Customized validator.
             **kwargs : Any other args accepted by the validators. To see all args check 'configuration' section in docs
         """
@@ -275,7 +276,7 @@ class Model(nn.Module):
         args = {**self.overrides, **custom, **kwargs, 'mode': 'val'}  # highest priority args on the right
 
         validator = (validator or self._smart_load('validator'))(args=args, _callbacks=self.callbacks)
-        validator(model=self.model)
+        validator(model=self.model, data_dir=data_dir)
         self.metrics = validator.metrics
         return validator.metrics
 
