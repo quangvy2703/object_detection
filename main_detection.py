@@ -130,6 +130,12 @@ if __name__ == "__main__":
         # metavar="N",
         help="using metrics",
     )
+    parser.add_argument(
+        "--resume",
+        type=bool,
+        # metavar="N",
+        help="resume training",
+    )
 
     main(parser.parse_args())
 

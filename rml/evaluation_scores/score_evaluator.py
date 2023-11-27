@@ -8,7 +8,9 @@ from sklearn import metrics
 from rml.domain.label import COCOBox
 
 
-class EvaluationScore:
+class ScoreEvaluator:
+    OVERALL = "Overall"
+
     def __init__(self):
         pass
 
@@ -50,25 +52,20 @@ class EvaluationScore:
         return ious
 
     @staticmethod
-    def precisions(ground_truths: Union[List[str], List[int]], predictions: Union[List[str], List[int]]) -> List[float]:
-        return [
-            metrics.precision_score(ground_truth, prediction, average="micro")
-            for ground_truth, prediction in zip(ground_truths, predictions)
-        ]
+    def precisions(ground_truths: Union[List[str], List[int]], predictions: Union[List[str], List[int]]) -> float:
+        return metrics.precision_score(ground_truths, predictions, average="micro")
 
     @staticmethod
-    def recalls(ground_truths: Union[List[str], List[int]], predictions: Union[List[str], List[int]]) -> List[float]:
-        return [
-            metrics.recall_score(ground_truth, prediction, average="micro")
-            for ground_truth, prediction in zip(ground_truths, predictions)
-        ]
+    def recalls(ground_truths: Union[List[str], List[int]], predictions: Union[List[str], List[int]]) -> float:
+        return metrics.recall_score(ground_truths, predictions, average="micro")
 
     @staticmethod
-    def average_precision_score(ground_truths: List[ndarray], prediction_scores: List[ndarray]) -> List[float]:
-        return [
-            metrics.average_precision_score(ground_truth, prediction_score, average="micro")
-            for ground_truth, prediction_score in zip(ground_truths, prediction_scores)
-        ]
+    def average_precision_score(ground_truths: List[ndarray], prediction_scores: List[ndarray]) -> float:
+        return metrics.average_precision_score(ground_truths, prediction_scores, average="micro")
+
+    @staticmethod
+    def accuracy(ground_truths: Union[List[str], List[int]], predictions: Union[List[str], List[int]]) -> float:
+        return metrics.accuracy_score(ground_truths, predictions)
 
 
 def compute_box_areas(bboxes: ndarray) -> ndarray:

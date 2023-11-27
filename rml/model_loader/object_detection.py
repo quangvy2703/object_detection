@@ -1,20 +1,27 @@
 import logging
 import os
 import yaml
-from typing import List
+from typing import List, Dict
+from tqdm import tqdm
 
 from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
 
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 from rml.model_loader.base import ModelLoader
+from rml.utils.validator import Score, ClassificationScore
+from rml.evaluation_scores.score_evaluator import ScoreEvaluator
 
 
 class YOLOv8ModelLoader(ModelLoader):
+    CLASSIFY = "classify"
+    DETECTION = "detect"
+
     @staticmethod
-    def from_pretrained(model_path: str):
+    def from_pretrained(model_path: str, task: str):
         return YOLOv8ModelLoader(
-            pretrained_model_path=model_path
+            pretrained_model_path=model_path,
+            task=task
         )
 
     @staticmethod
@@ -75,13 +82,15 @@ class YOLOv8ModelLoader(ModelLoader):
     def __init__(
             self,
             model_config_path: str = None,
-            pretrained_model_path: str = None
+            pretrained_model_path: str = None,
+            task: str = None
     ):
         self.model_config_path: str = model_config_path
         self.pretrained_model_path: str = pretrained_model_path
+        self.task: str = task
         assert self.model_config_path is not None or self.pretrained_model_path is not None, \
             "model_config_path or pretrained_model_path is required"
-        self.model = self._load(self.model_config_path, self.pretrained_model_path)
+        self.model = self._load(self.model_config_path, self.pretrained_model_path, task)
 
     def train(self, training_data_config_paths: List[str], train_configs: dict):
         # training_config = YOLOv8ModelLoader.load_training_config(train_config_path)
@@ -91,23 +100,83 @@ class YOLOv8ModelLoader(ModelLoader):
         results = self.model.predict(source=inference_input.images, show=show, save=save)
         return results
 
-    def validate(self):
-        metrics = self.model.val()
-        print(metrics)
-        return metrics
+    def validate(
+            self,
+            validation_data_dir: str,
+            names: Dict[int, str],
+            mapping_ids: Dict[int, int],
+            mapping_names: Dict[int, str],
+    ):
+        if self.task == YOLOv8ModelLoader.CLASSIFY:
+            scores = self._validate_classify(
+                data_dir=validation_data_dir,
+                names=names,
+                mapping_ids=mapping_ids,
+                mapping_names=mapping_names
+            )
+            print(scores)
+            return scores
 
     def export(self, format="torchscript"):
         return self.model.export(format=format)
 
+    def _validate_classify(
+            self,
+            data_dir: str,
+            names: Dict[int, str],
+            mapping_ids: Dict[int, int],
+            mapping_names: Dict[int, str],
+    ) -> Dict[str, ClassificationScore]:
+        reversed_names = {label: label_id for label_id, label in names.items()}
+        labels = os.listdir(data_dir)
+        images = {}
+        for label in labels:
+            if "DS_Store" in label:
+                continue
+            label_id = reversed_names[label]
+            mapped_label_id = mapping_ids[label_id]
+            # mapped_label = mapping_names[mapped_label_id]
+            images[mapped_label_id] = [
+                os.path.join(data_dir, label, image)
+                for image in os.listdir(os.path.join(data_dir, label))
+            ]
+
+        scores = {}
+        overall_true_labels = []
+        overall_predicted_labels = []
+        for label_id, label_images in images.items():
+            true_labels = []
+            predicted_labels = []
+            for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
+                true_labels.append(label_id)
+                overall_true_labels.append(label_id)
+                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
+                predicted_labels.append(result[0].probs.top1)
+                overall_predicted_labels.append(result[0].probs.top1)
+
+            scores[mapping_names[label_id]] = ClassificationScore(
+                precision=ScoreEvaluator.precisions(true_labels, predicted_labels),
+                recall=ScoreEvaluator.recalls(true_labels, predicted_labels),
+                accuracy=ScoreEvaluator.recalls(true_labels, predicted_labels)
+            )
+        scores[ScoreEvaluator.OVERALL] = ClassificationScore(
+            precision=ScoreEvaluator.precisions(overall_true_labels, overall_predicted_labels),
+            recall=ScoreEvaluator.recalls(overall_true_labels, overall_predicted_labels),
+            accuracy=ScoreEvaluator.recalls(overall_true_labels, overall_predicted_labels)
+        )
+
+        return scores
+
     def _load(
             self,
             model_config_path: str,
-            pretrained_model_path: str
+            pretrained_model_path: str,
+            task: str
     ):
         if model_config_path:
-            model = YOLO(model_config_path)
+            model = YOLO(model_config_path, task)
         if pretrained_model_path:
-            model = YOLO(pretrained_model_path)
+            model = YOLO(pretrained_model_path, task)
 
         return model
 
