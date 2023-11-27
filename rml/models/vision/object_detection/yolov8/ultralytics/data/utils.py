@@ -299,7 +299,6 @@ def check_det_dataset(datasets, autodownload=True):
     #     check_font('Arial.ttf' if is_ascii(data['classes']) else 'Arial.Unicode.ttf')  # download fonts
     #     loaded_datasets.append(data)
 
-    print("datasets", datasets)
     for dataset in datasets:
         data = check_file(dataset)
 
