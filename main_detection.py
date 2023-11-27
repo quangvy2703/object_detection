@@ -9,7 +9,8 @@ from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 def main(args):
     model_loader = YOLOv8ModelLoader.from_pretrained(
-        model_path=args.pretrained_path
+        model_path=args.pretrained_path,
+        task=YOLOv8ModelLoader.DETECTION
     )
     delimiter = "phamquangvy"
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(delimiter)]
