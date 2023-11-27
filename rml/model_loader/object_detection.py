@@ -114,7 +114,8 @@ class YOLOv8ModelLoader(ModelLoader):
                 mapping_ids=mapping_ids,
                 mapping_names=mapping_names
             )
-            print(scores)
+            for label, score in scores.items():
+                print(label, score.to_dict())
             return scores
 
     def export(self, format="torchscript"):

@@ -10,6 +10,13 @@ class ClassificationScore(Score):
         self.precision: float = precision
         self.recall: float = recall
 
+    def to_dict(self):
+        return {
+            "accuracy": self.accuracy,
+            "precision": self.precision,
+            "recall": self.recall
+        }
+
 
 class Validator:
     def validate(self) -> Score:
