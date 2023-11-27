@@ -19,6 +19,7 @@ class YOLOv8ModelLoader(ModelLoader):
 
     @staticmethod
     def from_pretrained(model_path: str, task: str):
+        print("YOLOv8ModelLoader", model_path, task)
         return YOLOv8ModelLoader(
             pretrained_model_path=model_path,
             task=task
@@ -90,7 +91,6 @@ class YOLOv8ModelLoader(ModelLoader):
         self.task: str = task
         assert self.model_config_path is not None or self.pretrained_model_path is not None, \
             "model_config_path or pretrained_model_path is required"
-        print(self.model_config_path, self.pretrained_model_path, task)
         self.model = self._load(self.model_config_path, self.pretrained_model_path, task)
 
     def train(self, training_data_config_paths: List[str], train_configs: dict):
