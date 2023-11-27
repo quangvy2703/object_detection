@@ -109,7 +109,7 @@ class YOLOv8ModelLoader(ModelLoader):
                 print(label, score.to_dict())
             return scores
         elif self.task == YOLOv8ModelLoader.DETECTION:
-            scores = self.model.val(validation_data_dir)
+            scores = self.model.val(data_dir=validation_data_dir)
             print(scores)
 
     def export(self, format="torchscript"):
