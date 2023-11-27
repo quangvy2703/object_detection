@@ -77,6 +77,7 @@ def seed_worker(worker_id):  # noqa
 
 def build_yolo_dataset(cfg, img_paths, batch, data, mode='train', rect=False, stride=32, using_mapping=False):
     """Build YOLO Dataset."""
+    print("build_yolo_dataset", img_paths)
     return YOLODataset(
         img_paths=img_paths,
         imgsz=cfg.imgsz,

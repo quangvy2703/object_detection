@@ -50,7 +50,6 @@ class DetectionTrainer(BaseTrainer):
         """Construct and return dataloader."""
         assert mode in ['train', 'val']
         with torch_distributed_zero_first(rank):  # init dataset *.cache only once if DDP
-            print("dataset_paths", dataset_paths)
             dataset = self.build_dataset(dataset_paths, mode, batch_size)
         shuffle = mode == 'train'
         if getattr(dataset, 'rect', False) and shuffle:
