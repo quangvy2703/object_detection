@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 from rml.model_loader.object_detection import YOLOv8ModelLoader
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import ImageInferenceInput
 
 
 model_loader = YOLOv8ModelLoader.from_pretrained(

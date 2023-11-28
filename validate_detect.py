@@ -3,18 +3,18 @@ from datetime import datetime
 
 
 from rml.model_loader.yolov8 import YOLOv8ModelLoader
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import ImageInferenceInput
 
 
 model_loader = YOLOv8ModelLoader.from_pretrained(
-    model_path='/content/drive/MyDrive/models/room_model_2/weights/best.pt',
+    model_path='rml/data/models/best_full_7.pt',
     task=YOLOv8ModelLoader.DETECTION
     # model_path='best.pt'
     # model_path='rml/data/models/yolov8l-furniture.pt'
 )
 
 
-validation_data_dir = "/content/room_type/room_type/rever/val"
+validation_data_dir = "/Users/phamvy/Projects/dataset/furniture/rever/valid"
 names = {
     0: "balcony",
     1: "bathroom",

@@ -4,7 +4,7 @@ import json
 
 from rml.model_loader.yolov8 import YOLOv8ModelLoader
 from rml.utils.on_train_end import OnTrainEnd
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import ImageInferenceInput
 
 
 def main(args):

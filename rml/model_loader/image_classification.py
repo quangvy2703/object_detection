@@ -8,7 +8,7 @@ import numpy as np
 from transformers import AutoModelForImageClassification, TrainingArguments, Trainer
 from datasets import load_metric
 
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import ImageInferenceInput
 
 from rml.model_loader.base import ModelLoader
 from rml.dataloader.image_classification import ImageClassificationDataset
@@ -80,7 +80,7 @@ class VisionTransformerModelLoader(ModelLoader):
         trainer.save_metrics("train", train_results.metrics)
         trainer.save_state()
 
-    def inference(self, inference_input: ObjectDetectionInferenceInput, show: bool = False, save: bool = False):
+    def inference(self, inference_input: ImageInferenceInput, show: bool = False, save: bool = False):
         results = self.model.predict(source=inference_input.images, show=show, save=save)
         return results
 

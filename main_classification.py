@@ -1,9 +1,7 @@
 import argparse
-import os
 import json
 
 from rml.model_loader.yolov8 import YOLOv8ModelLoader
-from rml.utils.on_train_end import OnTrainEnd
 
 
 def main(args):
@@ -137,7 +135,7 @@ if __name__ == "__main__":
     # )
 
 
-from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
+from rml.models.vision.yolov8.ultralytics import YOLO
 
 # Load a model
 model = YOLO('yolov8n-cls.pt')  # load a pretrained model (recommended for training)
