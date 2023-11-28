@@ -63,7 +63,7 @@ class Model(nn.Module):
             task (Any, optional): Task type for the YOLO model. Defaults to None.
         """
         super().__init__()
-        print("asdasfsafasfafs")
+        print("asdasva a asdas asdasdasfsafasfafs")
 
         self.callbacks = callbacks.get_default_callbacks()
         self.predictor = None  # reuse predictor
