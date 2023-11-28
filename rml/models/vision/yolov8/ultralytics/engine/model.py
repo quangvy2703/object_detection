@@ -417,7 +417,6 @@ class Model(nn.Module):
     def _smart_load(self, key):
         """Load model/trainer/validator/predictor."""
         try:
-            print("self.task_map", self.task_map)
             return self.task_map[self.task][key]
         except Exception as e:
             name = self.__class__.__name__
