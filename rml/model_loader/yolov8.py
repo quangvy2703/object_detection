@@ -82,6 +82,7 @@ class YOLOv8ModelLoader(ModelLoader):
         assert self.model_config_path is not None or self.pretrained_model_path is not None, \
             "model_config_path or pretrained_model_path is required"
         self.model = self._load(self.model_config_path, self.pretrained_model_path, task)
+        assert self.model is not None, "Loaded model failed"
 
     def train(self, training_data_config_paths: List[str], train_configs: dict):
         self.model.train(data=training_data_config_paths, **train_configs)
