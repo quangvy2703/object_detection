@@ -334,7 +334,6 @@ class Model(nn.Module):
         args = {**overrides, **custom, **kwargs, 'mode': 'train'}  # highest priority args on the right
         if args.get('resume'):
             args['resume'] = self.ckpt_path
-        print("trainer", trainer)
         self.trainer = (trainer or self._smart_load('trainer'))(overrides=args, _callbacks=self.callbacks)
         if not args.get('resume'):  # manually set model only if not resuming
             self.trainer.model = self.trainer.get_model(weights=self.model if self.ckpt else None, cfg=self.model.yaml)
@@ -418,6 +417,7 @@ class Model(nn.Module):
     def _smart_load(self, key):
         """Load model/trainer/validator/predictor."""
         try:
+            print("self.task_map", self.task_map)
             return self.task_map[self.task][key]
         except Exception as e:
             name = self.__class__.__name__
