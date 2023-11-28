@@ -126,8 +126,8 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--device",
-        type=int,
-        default=0,
+        type=str,
+        default="0",
         # metavar="N",
         help="using metrics",
     )
