@@ -4,7 +4,7 @@ import json
 
 from rml.model_loader.yolov8 import YOLOv8ModelLoader
 from rml.utils.on_train_end import OnTrainEnd
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import InferenceInput
 
 
 def main(args):
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--device",
         type=str,
-        default=0,
+        default="0",
         # metavar="N",
         help="using metrics",
     )

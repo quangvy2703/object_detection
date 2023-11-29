@@ -7,7 +7,7 @@ from tqdm import tqdm
 from rml.models.vision.yolov8.ultralytics import YOLO
 from rml.models.vision.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
 
-from rml.domain.inference_input import ObjectDetectionInferenceInput
+from rml.domain.inference_input import InferenceInput
 
 from rml.model_loader.base import ModelLoader
 from rml.utils.validator import Score, ClassificationScore
@@ -87,7 +87,7 @@ class YOLOv8ModelLoader(ModelLoader):
     def train(self, training_data_config_paths: List[str], train_configs: dict):
         self.model.train(data=training_data_config_paths, **train_configs)
 
-    def inference(self, inference_input: ObjectDetectionInferenceInput, show: bool = False, save: bool = False):
+    def inference(self, inference_input: InferenceInput, show: bool = False, save: bool = False):
         results = self.model.predict(source=inference_input.images, show=show, save=save)
         return results
 

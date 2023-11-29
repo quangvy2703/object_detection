@@ -2,7 +2,7 @@
 .idea
 .DS_Store
 
-data
+rml/data
 logs
 datasets
 test*.py
