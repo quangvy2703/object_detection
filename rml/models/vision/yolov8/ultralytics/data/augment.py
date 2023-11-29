@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 import math
 import random
@@ -928,7 +928,7 @@ def v8_transforms(dataset, imgsz, hyp, stretch=False):
             perspective=hyp.perspective,
             pre_transform=None if stretch else LetterBox(new_shape=(imgsz, imgsz)),
         )])
-    flip_idx = dataset.data.get('flip_idx', [])  # for keypoints augmentation
+    flip_idx = dataset.data[0].get('flip_idx', [])  # for keypoints augmentation
     if dataset.use_keypoints:
         kpt_shape = dataset.data.get('kpt_shape', None)
         if len(flip_idx) == 0 and hyp.fliplr > 0.0:

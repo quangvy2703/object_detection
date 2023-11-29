@@ -1,9 +1,9 @@
 #!/bin/bash
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 # Download COCO 2017 dataset http://cocodataset.org
 # Example usage: bash data/scripts/get_coco.sh
 # parent
-# ├── ultralytics
+# ├── rml.vision.object_detection.models.yolov8.ultralytics
 # └── datasets
 #     └── coco  ← downloads here
 
@@ -28,7 +28,7 @@ fi
 
 # Download/unzip labels
 d='../datasets' # unzip directory
-url=https://github.com/ultralytics/yolov5/releases/download/v1.0/
+url=https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/yolov5/releases/download/v1.0/
 if [ "$segments" == "true" ]; then
   f='coco2017labels-segments.zip' # 169 MB
 elif [ "$sama" == "true" ]; then

@@ -1,7 +1,7 @@
 #!/bin/bash
-# Ultralytics YOLO 🚀, AGPL-3.0 license
-# Download latest models from https://github.com/ultralytics/assets/releases
-# Example usage: bash ultralytics/data/scripts/download_weights.sh
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
+# Download latest models from https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/assets/releases
+# Example usage: bash rml.vision.object_detection.models.yolov8.ultralytics/data/scripts/download_weights.sh
 # parent
 # └── weights
 #     ├── yolov8n.pt  ← downloads here
@@ -9,7 +9,7 @@
 #     └── ...
 
 python - <<EOF
-from ultralytics.utils.downloads import attempt_download_asset
+from rml.vision.object_detection.models.yolov8.ultralytics.utils.downloads import attempt_download_asset
 
 assets = [f'yolov8{size}{suffix}.pt' for size in 'nsmlx' for suffix in ('', '-cls', '-seg', '-pose')]
 for x in assets:

@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 import glob
 import math
@@ -48,7 +48,7 @@ class BaseDataset(Dataset):
     """
 
     def __init__(self,
-                 img_path,
+                 img_paths,
                  imgsz=640,
                  cache=False,
                  augment=True,
@@ -63,13 +63,15 @@ class BaseDataset(Dataset):
                  fraction=1.0):
         """Initialize BaseDataset with given configuration and options."""
         super().__init__()
-        self.img_path = img_path
+        self.img_paths = img_paths
         self.imgsz = imgsz
         self.augment = augment
         self.single_cls = single_cls
         self.prefix = prefix
         self.fraction = fraction
-        self.im_files = self.get_img_files(self.img_path)
+        self.im_files = []
+        for img_path in self.img_paths:
+            self.im_files.extend(self.get_img_files(img_path))
         self.labels = self.get_labels()
         self.update_labels(include_class=classes)  # single_cls and include_class
         self.ni = len(self.labels)  # number of images
@@ -249,7 +251,7 @@ class BaseDataset(Dataset):
 
     def get_image_and_label(self, index):
         """Get and return label information from the dataset."""
-        label = deepcopy(self.labels[index])  # requires deepcopy() https://github.com/ultralytics/ultralytics/pull/1948
+        label = deepcopy(self.labels[index])  # requires deepcopy() https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/rml.vision.object_detection.models.yolov8.ultralytics/pull/1948
         label.pop('shape', None)  # shape is for rect, remove it
         label['img'], label['ori_shape'], label['resized_shape'] = self.load_image(index)
         label['ratio_pad'] = (label['resized_shape'][0] / label['ori_shape'][0],

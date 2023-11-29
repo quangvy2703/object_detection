@@ -1,9 +1,12 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 import contextlib
+import os
 from itertools import repeat
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
-
+from typing import Dict
+import yaml
+from tqdm import tqdm
 import cv2
 import numpy as np
 import torch
@@ -15,7 +18,7 @@ from .augment import Compose, Format, Instances, LetterBox, classify_albumentati
 from .base import BaseDataset
 from .utils import HELP_URL, LOGGER, get_hash, img2label_paths, verify_image, verify_image_label
 
-# Ultralytics dataset *.cache version, >= 1.0.0 for YOLOv8
+# rml.vision.object_detection.models.yolov8.ultralytics dataset *.cache version, >= 1.0.0 for YOLOv8
 DATASET_CACHE_VERSION = '1.0.3'
 
 
@@ -32,11 +35,14 @@ class YOLODataset(BaseDataset):
         (torch.utils.data.Dataset): A PyTorch dataset object that can be used for training an object detection model.
     """
 
-    def __init__(self, *args, data=None, use_segments=False, use_keypoints=False, **kwargs):
+    def __init__(self, *args, data=None, use_segments=False, use_keypoints=False, using_mapping=False, **kwargs):
         """Initializes the YOLODataset with optional configurations for segments and keypoints."""
         self.use_segments = use_segments
         self.use_keypoints = use_keypoints
         self.data = data
+
+        self.num_classes = len(self.data[0]["mapping_names"]) if using_mapping else len(self.data[0]["names"])
+
         assert not (self.use_segments and self.use_keypoints), 'Can not use both segments and keypoints.'
         super().__init__(*args, **kwargs)
 
@@ -48,22 +54,41 @@ class YOLODataset(BaseDataset):
             path (Path): path where to save the cache file (default: Path('./labels.cache')).
         Returns:
             (dict): labels.
+            :param num_classes:
         """
         x = {'labels': []}
         nm, nf, ne, nc, msgs = 0, 0, 0, 0, []  # number missing, found, empty, corrupt, messages
-        desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
         total = len(self.im_files)
-        nkpt, ndim = self.data.get('kpt_shape', (0, 0))
+        label_id_mapping = {}
+        for _data in self.data:
+            if _data['using_mapping']:
+                label_id_mapping[_data["data_dir"].stem] = _data.get('mapping_id', None)
+            else:
+                label_id_mapping = None
+        # for _data in self.data:
+        desc = f'{self.prefix}Scanning {path.parent / path.stem}...'
+        nkpt, ndim = _data.get('kpt_shape', (0, 0))
         if self.use_keypoints and (nkpt <= 0 or ndim not in (2, 3)):
             raise ValueError("'kpt_shape' in data.yaml missing or incorrect. Should be a list with [number of "
                              "keypoints, number of dims (2 for x,y or 3 for x,y,visible)], i.e. 'kpt_shape: [17, 3]'")
         with ThreadPool(NUM_THREADS) as pool:
-            results = pool.imap(func=verify_image_label,
-                                iterable=zip(self.im_files, self.label_files, repeat(self.prefix),
-                                             repeat(self.use_keypoints), repeat(len(self.data['names'])), repeat(nkpt),
-                                             repeat(ndim)))
+            results = pool.imap(
+                func=verify_image_label,
+                iterable=zip(
+                    self.im_files,
+                    self.label_files,
+                    repeat(self.prefix),
+                    repeat(self.use_keypoints),
+                    repeat(self.num_classes),
+                    # repeat(len(_data['names'])),
+                    repeat(nkpt),
+                    repeat(ndim),
+                    repeat(label_id_mapping)
+                )
+            )
             pbar = TQDM(results, desc=desc, total=total)
             for im_file, lb, shape, segments, keypoint, nm_f, nf_f, ne_f, nc_f, msg in pbar:
+                # desc = f'{self.prefix}Scanning {im_file.rsplit(1)[0]}...'
                 nm += nm_f
                 nf += nf_f
                 ne += ne_f
@@ -81,7 +106,7 @@ class YOLODataset(BaseDataset):
                             bbox_format='xywh'))
                 if msg:
                     msgs.append(msg)
-                pbar.desc = f'{desc} {nf} images, {nm + ne} backgrounds, {nc} corrupt'
+                pbar.desc = f'{desc} {nf} images [{im_file}], {nm + ne} backgrounds, {nc} corrupt'
             pbar.close()
 
         if msgs:
@@ -197,7 +222,7 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
     YOLO Classification Dataset.
 
     Args:
-        root (str): Dataset path.
+        roots (List[str]): Dataset paths.
 
     Attributes:
         cache_ram (bool): True if images should be cached in RAM, False otherwise.
@@ -207,24 +232,45 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
         album_transforms (callable, optional): Albumentations transforms applied to the dataset if augment is True.
     """
 
-    def __init__(self, root, args, augment=False, cache=False, prefix=''):
+    def __init__(self, datasets: Dict[str, str], args, augment=False, cache=False, prefix=''):
         """
         Initialize YOLO object with root, image size, augmentations, and cache settings.
 
         Args:
-            root (str): Dataset path.
+            datasets (Dict[str, str]): Dataset path.
             args (Namespace): Argument parser containing dataset related settings.
             augment (bool, optional): True if dataset should be augmented, False otherwise. Defaults to False.
             cache (bool | str | optional): Cache setting, can be True, False, 'ram' or 'disk'. Defaults to False.
         """
-        super().__init__(root=root)
-        if augment and args.fraction < 1.0:  # reduce training fraction
-            self.samples = self.samples[:round(len(self.samples) * args.fraction)]
-        self.prefix = colorstr(f'{prefix}: ') if prefix else ''
-        self.cache_ram = cache is True or cache == 'ram'
-        self.cache_disk = cache == 'disk'
-        self.samples = self.verify_images()  # filter out bad images
-        self.samples = [list(x) + [Path(x[0]).with_suffix('.npy'), None] for x in self.samples]  # file, index, npy, im
+        all_samples = []
+        for root, config_path in datasets.items():
+            print(os.path.join(args.data[str(root)], prefix))
+
+            self.data_config = load_data_config(args.data[str(root)])
+            print("data_config", self.data_config)
+
+            if self.data_config.get('using_mapping', False) is True:
+                self.class_id_mapping = self.data_config.get('mapping_id')
+                self.names = self.data_config["names"]
+            else:
+                self.class_id_mapping = None
+                self.names = None
+
+            super().__init__(root=os.path.join(str(root), prefix))
+            self.samples = self._map_class_id()
+            # print(self.samples)
+            if augment and args.fraction < 1.0:  # reduce training fraction
+                self.samples = self.samples[:round(len(self.samples) * args.fraction)]
+            self.prefix = colorstr(f'{prefix}: ') if prefix else ''
+            self.cache_ram = cache is True or cache == 'ram'
+            self.cache_disk = cache == 'disk'
+            self.samples = self.verify_images()  # filter out bad images
+            self.samples = [list(x) + [Path(x[0]).with_suffix('.npy'), None] for x in self.samples]  # file, index, npy, im
+
+            all_samples.extend(self.samples)
+        self.samples = all_samples
+        del all_samples
+
         self.torch_transforms = classify_transforms(args.imgsz, rect=args.rect)
         self.album_transforms = classify_albumentations(
             augment=augment,
@@ -238,6 +284,31 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
             mean=(0.0, 0.0, 0.0),  # IMAGENET_MEAN
             std=(1.0, 1.0, 1.0),  # IMAGENET_STD
             auto_aug=False) if augment else None
+
+    def _map_class_id(self):
+        idx_to_class = dict([(idx, class_name) for class_name, idx in self.class_to_idx.items()])
+        pre_defined_class_to_id = dict([(class_name, idx) for idx, class_name in self.data_config["names"].items()])
+        mapped_samples = []
+        for sample_idx, sample in tqdm(enumerate(self.samples)):
+            mapped_id = self._get_mapping_id(
+                class_id=sample[1],
+                idx_to_class=idx_to_class,
+                pre_defined_class_to_id=pre_defined_class_to_id
+            )
+            if mapped_id != -1:
+                mapped_samples.append(
+                    (sample[0], mapped_id)
+                )
+        return mapped_samples
+
+    def _get_mapping_id(
+            self,
+            class_id: int,
+            idx_to_class: Dict[int, str],
+            pre_defined_class_to_id: Dict[str, int]
+    ) -> int:
+        pre_defined_class_id = pre_defined_class_to_id[idx_to_class[class_id]]
+        return self.data_config["mapping_id"][pre_defined_class_id]
 
     def __getitem__(self, i):
         """Returns subset of data and targets corresponding to given indices."""
@@ -299,18 +370,22 @@ class ClassificationDataset(torchvision.datasets.ImageFolder):
         save_dataset_cache_file(self.prefix, path, x)
         return samples
 
+def load_data_config(path):
+    with open(path, 'r') as file:
+        configs = yaml.safe_load(file)
+        return configs
 
 def load_dataset_cache_file(path):
-    """Load an Ultralytics *.cache dictionary from path."""
+    """Load an rml.vision.object_detection.models.yolov8.ultralytics *.cache dictionary from path."""
     import gc
-    gc.disable()  # reduce pickle load time https://github.com/ultralytics/ultralytics/pull/1585
+    gc.disable()  # reduce pickle load time https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/rml.vision.object_detection.models.yolov8.ultralytics/pull/1585
     cache = np.load(str(path), allow_pickle=True).item()  # load dict
     gc.enable()
     return cache
 
 
 def save_dataset_cache_file(prefix, path, x):
-    """Save an Ultralytics dataset *.cache dictionary x to path."""
+    """Save an rml.vision.object_detection.models.yolov8.ultralytics dataset *.cache dictionary x to path."""
     x['version'] = DATASET_CACHE_VERSION  # add cache version
     if is_dir_writeable(path.parent):
         if path.exists():

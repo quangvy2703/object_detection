@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 import glob
 import math
@@ -67,16 +67,11 @@ class LoadStreams:
         self.mode = 'stream'
         self.imgsz = imgsz
         self.vid_stride = vid_stride  # video frame-rate stride
-
         sources = Path(sources).read_text().rsplit() if os.path.isfile(sources) else [sources]
         n = len(sources)
-        self.fps = [0] * n  # frames per second
-        self.frames = [0] * n
-        self.threads = [None] * n
-        self.caps = [None] * n  # video capture objects
-        self.imgs = [[] for _ in range(n)]  # images
-        self.shape = [[] for _ in range(n)]  # image shapes
         self.sources = [ops.clean_str(x) for x in sources]  # clean source names for later
+        self.imgs, self.fps, self.frames, self.threads, self.shape = [[]] * n, [0] * n, [0] * n, [None] * n, [[]] * n
+        self.caps = [None] * n  # video capture objects
         for i, s in enumerate(sources):  # index, source
             # Start thread to read frames from video stream
             st = f'{i + 1}/{n}: {s}... '
@@ -279,7 +274,7 @@ class LoadImages:
             path = Path(path).read_text().splitlines()  # list of sources
         files = []
         for p in sorted(path) if isinstance(path, (list, tuple)) else [path]:
-            a = str(Path(p).absolute())  # do not use .resolve() https://github.com/ultralytics/ultralytics/issues/2912
+            a = str(Path(p).absolute())  # do not use .resolve() https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/rml.vision.object_detection.models.yolov8.ultralytics/issues/2912
             if '*' in a:
                 files.extend(sorted(glob.glob(a, recursive=True)))  # glob
             elif os.path.isdir(a):
@@ -489,8 +484,8 @@ def autocast_list(source):
         elif isinstance(im, (Image.Image, np.ndarray)):  # PIL or np Image
             files.append(im)
         else:
-            raise TypeError(f'type {type(im).__name__} is not a supported Ultralytics prediction source type. \n'
-                            f'See https://docs.ultralytics.com/modes/predict for supported source types.')
+            raise TypeError(f'type {type(im).__name__} is not a supported rml.vision.object_detection.models.yolov8.ultralytics prediction source type. \n'
+                            f'See https://docs.rml.vision.object_detection.models.yolov8.ultralytics.com/modes/predict for supported source types.')
 
     return files
 
@@ -498,7 +493,7 @@ def autocast_list(source):
 LOADERS = LoadStreams, LoadPilAndNumpy, LoadImages, LoadScreenshots  # tuple
 
 
-def get_best_youtube_url(url, use_pafy=True):
+def get_best_youtube_url(url, use_pafy=False):
     """
     Retrieves the URL of the best quality MP4 video stream from a given YouTube video.
 

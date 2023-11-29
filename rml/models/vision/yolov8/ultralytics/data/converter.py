@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 import json
 from collections import defaultdict
@@ -26,7 +26,7 @@ def coco91_to_coco80_class():
         None, 73, 74, 75, 76, 77, 78, 79, None]
 
 
-def coco80_to_coco91_class():
+def coco80_to_coco91_class():  #
     """
     Converts 80-index (val2014) to 91-index (paper).
     For details see https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/.
@@ -64,7 +64,7 @@ def convert_coco(labels_dir='../coco/annotations/',
 
     Example:
         ```python
-        from ultralytics.data.converter import convert_coco
+        from rml.vision.object_detection.models.yolov8.ultralytics.data.converter import convert_coco
 
         convert_coco('../datasets/coco/annotations/', use_segments=True, use_keypoints=False, cls91to80=True)
         ```
@@ -160,7 +160,7 @@ def convert_dota_to_yolo_obb(dota_root_path: str):
 
     Example:
         ```python
-        from ultralytics.data.converter import convert_dota_to_yolo_obb
+        from rml.vision.object_detection.models.yolov8.ultralytics.data.converter import convert_dota_to_yolo_obb
 
         convert_dota_to_yolo_obb('path/to/DOTA')
         ```
@@ -198,7 +198,7 @@ def convert_dota_to_yolo_obb(dota_root_path: str):
         'small-vehicle': 10,
         'helicopter': 11,
         'roundabout': 12,
-        'soccer-ball-field': 13,
+        'soccer ball-field': 13,
         'swimming-pool': 14,
         'container-crane': 15,
         'airport': 16,

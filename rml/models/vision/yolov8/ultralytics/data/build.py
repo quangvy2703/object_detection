@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 import os
 import random
@@ -10,7 +10,7 @@ from PIL import Image
 from torch.utils.data import dataloader, distributed
 
 from rml.models.vision.yolov8.ultralytics.data.loaders import (LOADERS, LoadImages, LoadPilAndNumpy, LoadScreenshots, LoadStreams, LoadTensor,
-                                      SourceTypes, autocast_list)
+                                                                                SourceTypes, autocast_list)
 from rml.models.vision.yolov8.ultralytics.data.utils import IMG_FORMATS, VID_FORMATS
 from rml.models.vision.yolov8.ultralytics.utils import RANK, colorstr
 from rml.models.vision.yolov8.ultralytics.utils.checks import check_file
@@ -75,10 +75,10 @@ def seed_worker(worker_id):  # noqa
     random.seed(worker_seed)
 
 
-def build_yolo_dataset(cfg, img_path, batch, data, mode='train', rect=False, stride=32):
+def build_yolo_dataset(cfg, img_paths, batch, data, mode='train', rect=False, stride=32, using_mapping=False):
     """Build YOLO Dataset."""
     return YOLODataset(
-        img_path=img_path,
+        img_paths=img_paths,
         imgsz=cfg.imgsz,
         batch_size=batch,
         augment=mode == 'train',  # augmentation
@@ -93,7 +93,9 @@ def build_yolo_dataset(cfg, img_path, batch, data, mode='train', rect=False, str
         use_keypoints=cfg.task == 'pose',
         classes=cfg.classes,
         data=data,
-        fraction=cfg.fraction if mode == 'train' else 1.0)
+        fraction=cfg.fraction if mode == 'train' else 1.0,
+        using_mapping=using_mapping
+    )
 
 
 def build_dataloader(dataset, batch, workers, shuffle=True, rank=-1):
@@ -136,7 +138,7 @@ def check_source(source):
     elif isinstance(source, torch.Tensor):
         tensor = True
     else:
-        raise TypeError('Unsupported image type. For supported types see https://docs.ultralytics.com/modes/predict')
+        raise TypeError('Unsupported image type. For supported types see https://docs.rml.vision.object_detection.models.yolov8.ultralytics.com/modes/predict')
 
     return source, webcam, screenshot, from_img, in_memory, tensor
 
