@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from typing import List, Dict
-from tqdm.notebook import tqdm
+from tqdm.autonotebook import tqdm
 
 def load_open_image_metadata(open_image_dir: str, split: str):
     classes_mapping_df = pd.read_csv(

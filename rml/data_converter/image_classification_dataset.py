@@ -4,7 +4,7 @@ import pathlib
 import pandas as pd
 import yaml
 import shutil
-from tqdm.notebook import tqdm
+from tqdm.autonotebook import tqdm
 
 from rml.data_converter.base import DatasetConverter
 from rml.utils.dataset_utils import load_open_image_metadata
