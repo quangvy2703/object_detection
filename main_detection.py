@@ -126,11 +126,12 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--device",
-        type=int,
+        type=str,
         default=0,
         # metavar="N",
         help="using metrics",
     )
+
     parser.add_argument(
         "--resume",
         type=bool,
