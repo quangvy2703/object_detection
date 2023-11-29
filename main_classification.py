@@ -137,7 +137,7 @@ if __name__ == "__main__":
     # )
 
 
-from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
+from rml.models.vision.yolov8.ultralytics import YOLO
 
 # Load a model
 model = YOLO('yolov8n-cls.pt')  # load a pretrained model (recommended for training)

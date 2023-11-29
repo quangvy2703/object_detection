@@ -3,7 +3,7 @@ import os
 import yaml
 from typing import List
 
-from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
+from rml.models.vision.yolov8.ultralytics import YOLO
 
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 

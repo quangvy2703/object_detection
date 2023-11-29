@@ -4,8 +4,8 @@ import yaml
 from typing import List, Dict
 from tqdm import tqdm
 
-from rml.models.vision.object_detection.yolov8.ultralytics import YOLO
-from rml.models.vision.object_detection.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
+from rml.models.vision.yolov8.ultralytics import YOLO
+from rml.models.vision.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
 
 from rml.domain.inference_input import ObjectDetectionInferenceInput
 
