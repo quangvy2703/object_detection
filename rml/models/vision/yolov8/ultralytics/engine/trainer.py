@@ -634,8 +634,9 @@ class BaseTrainer:
 
                 # Check that resume data YAML exists, otherwise strip to force re-download of dataset
                 ckpt_args = attempt_load_weights(last).args
-                if not Path(ckpt_args['data']).exists():
-                    ckpt_args['data'] = self.args.data
+                for data in ckpt_args['data']:
+                    if not Path(data).exists():
+                        ckpt_args['data'] = self.args.data
 
                 resume = True
                 self.args = get_cfg(ckpt_args)
