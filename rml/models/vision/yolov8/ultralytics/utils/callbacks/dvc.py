@@ -1,7 +1,6 @@
 # rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
-from rml.models.vision.yolov8.ultralytics.utils import LOGGER, SETTINGS, TESTS_RUNNING
-from rml.models.vision.yolov8.ultralytics.utils import checks
+from rml.models.vision.yolov8.ultralytics.utils import LOGGER, SETTINGS, TESTS_RUNNING, checks
 
 try:
     assert not TESTS_RUNNING  # do not log pytest

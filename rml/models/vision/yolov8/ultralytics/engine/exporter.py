@@ -68,7 +68,7 @@ from rml.models.vision.yolov8.ultralytics.nn.autobackend import check_class_name
 from rml.models.vision.yolov8.ultralytics.nn.modules import C2f, Detect, RTDETRDecoder
 from rml.models.vision.yolov8.ultralytics.nn.tasks import DetectionModel, SegmentationModel
 from rml.models.vision.yolov8.ultralytics.utils import (ARM64, DEFAULT_CFG, LINUX, LOGGER, MACOS, ROOT, WINDOWS, __version__,
-                                                        colorstr, get_default_args, yaml_save)
+                                                                         colorstr, get_default_args, yaml_save)
 from rml.models.vision.yolov8.ultralytics.utils import callbacks
 from rml.models.vision.yolov8.ultralytics.utils.checks import check_imgsz, check_requirements, check_version
 from rml.models.vision.yolov8.ultralytics.utils.downloads import attempt_download_asset, get_github_assets

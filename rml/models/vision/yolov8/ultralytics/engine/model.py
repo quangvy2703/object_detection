@@ -8,8 +8,9 @@ from typing import Union
 from rml.models.vision.yolov8.ultralytics.cfg import TASK2DATA, get_cfg, get_save_dir
 from rml.models.vision.yolov8.ultralytics.hub.utils import HUB_WEB_ROOT
 from rml.models.vision.yolov8.ultralytics.nn.tasks import attempt_load_one_weight, guess_model_task, nn, yaml_model_load
-from rml.models.vision.yolov8.ultralytics.utils import ASSETS, DEFAULT_CFG_DICT, LOGGER, RANK, emojis, yaml_load
-from rml.models.vision.yolov8.ultralytics.utils import callbacks, checks
+from rml.models.vision.yolov8.ultralytics.utils import ASSETS, DEFAULT_CFG_DICT, LOGGER, RANK, \
+    checks, emojis, yaml_load
+from rml.models.vision.yolov8.ultralytics.utils import callbacks
 from rml.models.vision.yolov8.ultralytics.utils.downloads import GITHUB_ASSETS_STEMS
 
 
@@ -63,8 +64,6 @@ class Model(nn.Module):
             task (Any, optional): Task type for the YOLO model. Defaults to None.
         """
         super().__init__()
-        print("asdasva a asdas asdasdasfsafasfafs")
-
         self.callbacks = callbacks.get_default_callbacks()
         self.predictor = None  # reuse predictor
         self.model = None  # model object
@@ -336,6 +335,7 @@ class Model(nn.Module):
         args = {**overrides, **custom, **kwargs, 'mode': 'train'}  # highest priority args on the right
         if args.get('resume'):
             args['resume'] = self.ckpt_path
+
         self.trainer = (trainer or self._smart_load('trainer'))(overrides=args, _callbacks=self.callbacks)
         if not args.get('resume'):  # manually set model only if not resuming
             self.trainer.model = self.trainer.get_model(weights=self.model if self.ckpt else None, cfg=self.model.yaml)

@@ -8,8 +8,7 @@ from time import sleep
 import requests
 
 from rml.models.vision.yolov8.ultralytics.hub.utils import HUB_API_ROOT, HUB_WEB_ROOT, PREFIX, smart_request
-from rml.models.vision.yolov8.ultralytics.utils import LOGGER, __version__, emojis, is_colab, threaded
-from rml.models.vision.yolov8.ultralytics.utils import checks
+from rml.models.vision.yolov8.ultralytics.utils import LOGGER, __version__, checks, emojis, is_colab, threaded
 from rml.models.vision.yolov8.ultralytics.utils.errors import HUBModelError
 
 AGENT_NAME = f'python-{__version__}-colab' if is_colab() else f'python-{__version__}-local'

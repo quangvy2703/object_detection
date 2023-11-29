@@ -22,9 +22,9 @@ import torch
 from matplotlib import font_manager
 
 from rml.models.vision.yolov8.ultralytics.utils import (ASSETS, AUTOINSTALL, LINUX, LOGGER, ONLINE, ROOT, USER_CONFIG_DIR, SimpleNamespace,
-                                                        ThreadingLocked, TryExcept, clean_url, colorstr,
-                                                        emojis, is_colab, is_docker,
-                                                        is_jupyter, is_kaggle, is_online, is_pip_package, url2file)
+                                                                         ThreadingLocked, TryExcept, clean_url, colorstr,
+                                                                         emojis, is_colab, is_docker,
+                                                                         is_jupyter, is_kaggle, is_online, is_pip_package, url2file)
 from rml.models.vision.yolov8.ultralytics.utils import downloads
 
 

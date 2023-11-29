@@ -6,8 +6,10 @@ Usage:
     $ yolo mode=train model=yolov8n.pt data=coco128.yaml imgsz=640 epochs=100 batch=16
 """
 import copy
+import json
 import math
 import os
+import shutil
 import subprocess
 import time
 import warnings
@@ -27,8 +29,8 @@ from rml.models.vision.yolov8.ultralytics.cfg import get_cfg, get_save_dir
 from rml.models.vision.yolov8.ultralytics.data.utils import check_cls_dataset, check_det_dataset
 from rml.models.vision.yolov8.ultralytics.nn.tasks import attempt_load_one_weight, attempt_load_weights
 from rml.models.vision.yolov8.ultralytics.utils import (DEFAULT_CFG, LOGGER, RANK, TQDM, __version__,
-                                                        colorstr, emojis,
-                                                        yaml_save)
+                                                                         clean_url, colorstr, emojis,
+                                                                         yaml_save)
 from rml.models.vision.yolov8.ultralytics.utils import callbacks
 from rml.models.vision.yolov8.ultralytics.utils.autobatch import check_train_batch_size
 from rml.models.vision.yolov8.ultralytics.utils.checks import check_amp, check_file, check_imgsz, \
@@ -36,9 +38,10 @@ from rml.models.vision.yolov8.ultralytics.utils.checks import check_amp, check_f
 from rml.models.vision.yolov8.ultralytics.utils.dist import ddp_cleanup, generate_ddp_command
 from rml.models.vision.yolov8.ultralytics.utils.files import get_latest_run
 from rml.models.vision.yolov8.ultralytics.utils.torch_utils import (EarlyStopping, ModelEMA,
-                                                                    de_parallel, init_seeds, one_cycle,
-                                                                    select_device,
-                                                                    strip_optimizer)
+                                                                                     de_parallel, init_seeds, one_cycle,
+                                                                                     select_device,
+                                                                                     strip_optimizer)
+from rml.utils.on_train_end import OnTrainEnd
 
 
 class BaseTrainer:
@@ -621,7 +624,6 @@ class BaseTrainer:
 
         return dict(zip(["last", "best"], metrics))
 
-
     def check_resume(self, overrides):
         """Check if resume checkpoint exists and update arguments accordingly."""
         resume = self.args.resume
@@ -632,12 +634,8 @@ class BaseTrainer:
 
                 # Check that resume data YAML exists, otherwise strip to force re-download of dataset
                 ckpt_args = attempt_load_weights(last).args
-                # print(ckpt_args)
-                for data in ckpt_args['data']:
-                  if not Path(data).exists():
-                    raise f"Missing data {data}"
-
-                # ckpt_args['data'] = self.args.data
+                if not Path(ckpt_args['data']).exists():
+                    ckpt_args['data'] = self.args.data
 
                 resume = True
                 self.args = get_cfg(ckpt_args)

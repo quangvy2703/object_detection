@@ -5,11 +5,12 @@ from typing import List, Dict
 from tqdm import tqdm
 
 from rml.models.vision.yolov8.ultralytics import YOLO
+from rml.models.vision.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
 
-from rml.domain.inference_input import ImageInferenceInput
+from rml.domain.inference_input import ObjectDetectionInferenceInput
 
 from rml.model_loader.base import ModelLoader
-from rml.utils.validator import ClassificationScore
+from rml.utils.validator import Score, ClassificationScore
 from rml.evaluation_scores.score_evaluator import ScoreEvaluator
 
 
@@ -82,12 +83,11 @@ class YOLOv8ModelLoader(ModelLoader):
         assert self.model_config_path is not None or self.pretrained_model_path is not None, \
             "model_config_path or pretrained_model_path is required"
         self.model = self._load(self.model_config_path, self.pretrained_model_path, task)
-        assert self.model is not None, "Loaded model failed"
 
     def train(self, training_data_config_paths: List[str], train_configs: dict):
         self.model.train(data=training_data_config_paths, **train_configs)
 
-    def inference(self, inference_input: ImageInferenceInput, show: bool = False, save: bool = False):
+    def inference(self, inference_input: ObjectDetectionInferenceInput, show: bool = False, save: bool = False):
         results = self.model.predict(source=inference_input.images, show=show, save=save)
         return results
 
@@ -147,7 +147,7 @@ class YOLOv8ModelLoader(ModelLoader):
             for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
                 true_labels.append(label_id)
                 overall_true_labels.append(label_id)
-                result = self.inference(inference_input=ImageInferenceInput.from_paths([image]))
+                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
                 predicted_labels.append(result[0].probs.top1)
                 overall_predicted_labels.append(result[0].probs.top1)
 
@@ -196,7 +196,7 @@ class YOLOv8ModelLoader(ModelLoader):
             for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
                 true_labels.append(label_id)
                 overall_true_labels.append(label_id)
-                result = self.inference(inference_input=ImageInferenceInput.from_paths([image]))
+                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
                 predicted_labels.append(result[0].probs.top1)
                 overall_predicted_labels.append(result[0].probs.top1)
 

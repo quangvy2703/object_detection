@@ -12,8 +12,7 @@ from urllib import parse, request
 import requests
 import torch
 
-from rml.models.vision.yolov8.ultralytics.utils import LOGGER, TQDM, clean_url, emojis, is_online, url2file
-from rml.models.vision.yolov8.ultralytics.utils import checks
+from rml.models.vision.yolov8.ultralytics.utils import LOGGER, TQDM, checks, clean_url, emojis, is_online, url2file
 
 # Define rml.vision.object_detection.models.yolov8.ultralytics GitHub assets maintained at https://github.com/rml.vision.object_detection.models.yolov8.ultralytics/assets
 GITHUB_ASSETS_REPO = 'ultralytics/assets'

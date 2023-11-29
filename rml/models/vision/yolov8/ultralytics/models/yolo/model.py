@@ -1,7 +1,7 @@
 # rml.vision.object_detection.models.yolov8.ultralytics YOLO 🚀, AGPL-3.0 license
 
 from rml.models.vision.yolov8.ultralytics.engine.model import Model
-from rml.models.vision.yolov8.ultralytics.models import yolo
+from rml.models.vision.yolov8.ultralytics.models import yolo  # noqa
 from rml.models.vision.yolov8.ultralytics.nn.tasks import ClassificationModel, DetectionModel, PoseModel, SegmentationModel
 
 

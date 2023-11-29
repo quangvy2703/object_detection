@@ -11,7 +11,7 @@ from pathlib import Path
 import requests
 
 from rml.models.vision.yolov8.ultralytics.utils import (ENVIRONMENT, LOGGER, ONLINE, RANK, SETTINGS, TESTS_RUNNING, TQDM, TryExcept, __version__,
-                                                        colorstr, get_git_origin_url, is_colab, is_git_dir, is_pip_package)
+                                                                         colorstr, get_git_origin_url, is_colab, is_git_dir, is_pip_package)
 from rml.models.vision.yolov8.ultralytics.utils.downloads import GITHUB_ASSETS_NAMES
 
 PREFIX = colorstr('rml.vision.object_detection.models.yolov8.ultralytics HUB: ')
