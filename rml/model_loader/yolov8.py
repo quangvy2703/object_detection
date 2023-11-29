@@ -7,7 +7,7 @@ from tqdm import tqdm
 from rml.models.vision.yolov8.ultralytics import YOLO
 from rml.models.vision.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator
 
-from rml.domain.inference_input import InferenceInput
+from rml.domain.inference_input import InferenceInput, ImageInferenceInput
 
 from rml.model_loader.base import ModelLoader
 from rml.utils.validator import Score, ClassificationScore
@@ -147,7 +147,7 @@ class YOLOv8ModelLoader(ModelLoader):
             for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
                 true_labels.append(label_id)
                 overall_true_labels.append(label_id)
-                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
+                result = self.inference(inference_input=ImageInferenceInput.from_paths([image]))
                 predicted_labels.append(result[0].probs.top1)
                 overall_predicted_labels.append(result[0].probs.top1)
 
@@ -196,7 +196,7 @@ class YOLOv8ModelLoader(ModelLoader):
             for image in tqdm(label_images, desc=f"Evaluating {mapping_names[label_id]}..."):
                 true_labels.append(label_id)
                 overall_true_labels.append(label_id)
-                result = self.inference(inference_input=ObjectDetectionInferenceInput.from_paths([image]))
+                result = self.inference(inference_input=ImageInferenceInput.from_paths([image]))
                 predicted_labels.append(result[0].probs.top1)
                 overall_predicted_labels.append(result[0].probs.top1)
 
