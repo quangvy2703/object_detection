@@ -44,7 +44,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--batch",
         type=int,
-        default=64,
+        default=16,
         # metavar="N",
         help="input batch size for training (default: 64)",
     )
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--epochs",
         type=int,
-        default=10,
+        default=50,
         # metavar="N",
         help="number of epochs to train (default: 10)",
     )
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default=None,
+        default="yolov8l.pt",
         # metavar="N",
         help="pretrained model path",
     )
@@ -91,6 +91,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_data_config_paths",
         type=str,
+        default="rml/configs/object_detection/rever_furniture.yaml,rml/configs/object_detection/open_image_v7_furniture.yaml",
         # metavar="N",
         help="training datasets configs",
     )
@@ -98,6 +99,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--train_config_path",
         type=str,
+        default="rml/configs/object_detection/default_training_config.yaml",
         # metavar="N",
         help="training configs",
     )
@@ -105,6 +107,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dirs",
         type=str,
+        default="/kaggle/input/furniture/furniture/rever,/kaggle/input/furniture/furniture/open_images",
         # metavar="N",
         help="data directory",
     )
@@ -112,7 +115,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="/content/drive/MyDrive/models/furniture_train",
+        default="furniture_model",
         # metavar="N",
         help="output directory",
     )
@@ -128,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--device",
         type=str,
-        default="0",
+        default="0, 1",
         # metavar="N",
         help="using metrics",
     )
@@ -136,6 +139,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resume",
         type=bool,
+        default=False,
         # metavar="N",
         help="resume training",
     )
