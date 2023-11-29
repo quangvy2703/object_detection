@@ -6,7 +6,7 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import Dict
 import yaml
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import cv2
 import numpy as np
 import torch

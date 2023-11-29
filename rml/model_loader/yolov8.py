@@ -2,7 +2,7 @@ import logging
 import os
 import yaml
 from typing import List, Dict
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 
 from rml.models.vision.yolov8.ultralytics import YOLO
 from rml.models.vision.yolov8.ultralytics.models.yolo.detect.val import DetectionValidator

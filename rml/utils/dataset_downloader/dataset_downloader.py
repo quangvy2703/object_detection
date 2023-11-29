@@ -1,4 +1,4 @@
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import numpy as np
 from pathlib import Path
 from pycocotools.coco import COCO

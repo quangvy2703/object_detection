@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import yaml
-from tqdm import tqdm as tqdm_original
+from tqdm.notebook import tqdm as tqdm_original
 
 from rml.models.vision.yolov8.ultralytics import __version__
 
