@@ -9,11 +9,11 @@ import numpy as np
 import torch
 import torchvision.transforms as T
 
-from ultralytics.utils import LOGGER, colorstr
-from ultralytics.utils.checks import check_version
-from ultralytics.utils.instance import Instances
-from ultralytics.utils.metrics import bbox_ioa
-from ultralytics.utils.ops import segment2box
+from rml.models.vision.yolov8.ultralytics.utils import LOGGER, colorstr
+from rml.models.vision.yolov8.ultralytics.utils.checks import check_version
+from rml.models.vision.yolov8.ultralytics.utils.instance import Instances
+from rml.models.vision.yolov8.ultralytics.utils.metrics import bbox_ioa
+from rml.models.vision.yolov8.ultralytics.utils.ops import segment2box
 
 from .utils import polygons2masks, polygons2masks_overlap
 

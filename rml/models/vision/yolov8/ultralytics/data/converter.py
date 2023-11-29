@@ -7,8 +7,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from ultralytics.utils import LOGGER, TQDM
-from ultralytics.utils.files import increment_path
+from rml.models.vision.yolov8.ultralytics.utils import LOGGER, TQDM
+from rml.models.vision.yolov8.ultralytics.utils.files import increment_path
 
 
 def coco91_to_coco80_class():
