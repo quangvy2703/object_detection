@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default="furniture_model/weights/last.pt",
+        default="/kaggle/input/last-checkpoint/last.pt",
         # metavar="N",
         help="pretrained model path",
     )
