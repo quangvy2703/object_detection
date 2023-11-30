@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default="yolov8l.pt",
+        default="furniture_model/weights/last.pt",
         # metavar="N",
         help="pretrained model path",
     )
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resume",
         type=bool,
-        default=False,
+        default=True,
         # metavar="N",
         help="resume training",
     )
