@@ -1,3 +1,6 @@
+from typing import Dict, List
+
+
 class InferenceResult:
     pass
 
@@ -23,6 +26,28 @@ class OIBox(Box):
         )
 
 
+class LVISBox(Box):
+    def __init__(self, x_min: float, y_min: float, width: float, height: float):
+        self.x_min: float = x_min
+        self.y_min: float = y_min
+        self.width: float = width
+        self.height: float = height
+
+    @staticmethod
+    def from_array(bbox: List[float]):
+        x_min = bbox[0]
+        y_min = bbox[1]
+        width = bbox[2]
+        height = bbox[3]
+
+        return LVISBox(
+            x_min=x_min,
+            y_min=y_min,
+            width=width,
+            height=height
+        )
+
+
 class COCOBox(Box):
     def __init__(self, x_center: float, y_center: float, width: float, height: float):
         self.x_center: float = x_center
@@ -39,6 +64,17 @@ class COCOBox(Box):
             y_center=oi_box.y_min + height / 2,
             width=width,
             height=height
+        )
+
+    @staticmethod
+    def from_lvis_box(lvis_box: LVISBox, image_w: float = None, image_h: float = None):
+        return COCOBox(
+            x_center=(lvis_box.x_min + lvis_box.width / 2) / image_w if image_w else (
+                        lvis_box.x_min + lvis_box.width / 2),
+            y_center=(lvis_box.y_min + lvis_box.height / 2) / image_h if image_h else (
+                        lvis_box.y_min + lvis_box.height / 2),
+            width=lvis_box.width / image_w if image_w else lvis_box.width,
+            height=lvis_box.height / image_h if image_h else lvis_box.height,
         )
 
     @staticmethod

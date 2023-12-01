@@ -1,0 +1,161 @@
+data_dir: /Users/phamvy/Projects/dataset/furniture/rever
+mapping_id:
+  0: -1
+  1: -1
+  2: 14
+  3: -1
+  4: 33
+  5: -1
+  6: 2
+  7: 34
+  8: 4
+  9: 4
+  10: 2
+  11: 35
+  12: 32
+  13: 28
+  14: 13
+  15: 6
+  16: -1
+  17: -1
+  18: -1
+  19: 36
+  20: 36
+  21: -1
+  22: -1
+  23: -1
+  24: 3
+  25: 2
+  26: 25
+  27: 0
+  28: -1
+  29: 37
+  30: 4
+  31: 38
+  32: -1
+  33: 10
+  34: 12
+  35: -1
+  36: 15
+  37: 39
+  38: 21
+  39: 22
+  40: 14
+  41: 18
+  42: 14
+  43: 9
+  44: 16
+  45: 40
+  46: 7
+  47: 8
+  48: -1
+  49: -1
+  50: -1
+  51: 17
+  52: 42
+  53: 11
+  54: 20
+mapping_names:
+  0: lamp
+  1: cupboard
+  2: cabinetry
+  3: wardrobe
+  4: pillow
+  5: bathroom_cabinet
+  6: kitchen_and_dining_room_table
+  7: gas_stove
+  8: washing_machine
+  9: chair
+  10: mirror
+  11: microwave/oven
+  12: toilet
+  13: sofa_bed/couch
+  14: shelf
+  15: sink
+  16: table/desk
+  17: refrigerator
+  18: television
+  19: ceiling_fan
+  20: oven
+  21: shower
+  22: bathtub
+  23: kitchenware (non-electrical)
+  24: kitchen_appliance (electrical)
+  25: nightstand
+  26: heater
+  27: piano
+  28: coffee_table
+  29: coffeemaker
+  30: closet
+  31: bathroom_accessory
+  32: dishwasher
+  33: fan
+  34: vacuum_cleaner
+  35: water_heater
+  36: kitchen_cabinet
+  37: makeup_table
+  38: bed
+  39: basin
+  40: kitchen_hood
+  41: fire_detector
+  42: air_conditioner
+names:
+  0: Invalid Image
+  1: UNKNOWN
+  2: Shelf
+  3: Fire extinguisher
+  4: Fan
+  5: Window
+  6: Cabinet
+  7: Vacuum cleaner
+  8: Backbrest pillow
+  9: Cushions
+  10: Shoe cabinet
+  11: Water heater
+  12: Dishwasher
+  13: Tea and coffee table
+  14: Sofa
+  15: Dining table and chairs
+  16: Kitchen
+  17: Dry kitchen
+  18: Wet kitchen
+  19: Above kitchen cabinet
+  20: Below kitchen cabinet
+  21: Fake wooden floor
+  22: Wooden floor
+  23: Enameled tile floor
+  24: Wardrobe
+  25: Closet cabinet
+  26: Bedside cupboard
+  27: Table lamp
+  28: Ceiling light
+  29: Makeup table
+  30: Pillow
+  31: Bed
+  32: Carpet
+  33: Mirror
+  34: Toilet bowl
+  35: Shower glass
+  36: Sink
+  37: Basin
+  38: Shower
+  39: Bathtub
+  40: TV shelf
+  41: TV
+  42: Bookshelf
+  43: Chair
+  44: Table
+  45: Kitchen hood
+  46: Gas stove
+  47: Washing machine
+  48: Smart drying platform
+  49: Dryer
+  50: Fire detector
+  51: Fridge
+  52: Air conditioner
+  53: Microwave
+  54: Oven
+test: null
+train: train/images/
+using_mapping: true
+val: valid/images/

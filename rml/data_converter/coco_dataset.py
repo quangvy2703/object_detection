@@ -1,18 +1,21 @@
 from typing import List
 import os
 import pathlib
-import pandas as pd
+
+import cv2
+import concurrent
+from concurrent.futures import ThreadPoolExecutor
 import yaml
 import shutil
 from tqdm.autonotebook import tqdm
 
 from rml.data_converter.base import DatasetConverter
-from rml.utils.dataset_utils import load_open_image_metadata
+from rml.utils.dataset_utils import load_open_image_metadata, load_lvis_metadata
 
-from rml.domain.label import OIBox, COCOBox
+from rml.domain.label import OIBox, COCOBox, LVISBox
 
 
-class CocoaDatasetConverter(DatasetConverter):
+class CocoDatasetConverter(DatasetConverter):
     def __init__(
             self,
             converted_dir: str,
@@ -85,3 +88,70 @@ class CocoaDatasetConverter(DatasetConverter):
                     os.path.join(open_image_dir, split, "data", f"{image_id}.jpg"),
                     os.path.join(converted_dir, "images", converted_split, f"{image_id}.jpg")
                 )
+
+    @staticmethod
+    def from_lvis(dataset_dir: str, converted_dir: str, classes: List[str], split: str = "train"):
+        converted_split = "valid" if split == "validation" else split
+        pathlib.Path(os.path.join(converted_dir, converted_split, "labels")).mkdir(parents=True, exist_ok=True)
+        pathlib.Path(os.path.join(converted_dir, converted_split, "images")).mkdir(parents=True, exist_ok=True)
+
+        classes_mapping, annotations = load_lvis_metadata(dataset_dir)
+        annotation_by_image_id = {}
+        bboxes, category_ids, image_ids = [], [], []
+        for annotation in tqdm(annotations):
+            bboxes.append(annotation["bbox"])
+            category_ids.append(annotation["category_id"])
+            image_ids.append(annotation["image_id"])
+            if annotation["image_id"] in annotation_by_image_id:
+                annotation_by_image_id[annotation["image_id"]].append(
+                    {
+                        "bbox": annotation["bbox"],
+                        "category_id": annotation["category_id"]
+                    }
+                )
+            else:
+                annotation_by_image_id[annotation["image_id"]] = [
+                    {
+                        "bbox": annotation["bbox"],
+                        "category_id": annotation["category_id"]
+                    }
+                ]
+
+        def convert(image_id: str, annotations: List[dict]):
+            img = cv2.imread(os.path.join(dataset_dir, "coco2017", "train2017", f"{image_id:012d}.jpg"))
+            img_w, img_h = img.shape[1], img.shape[0]
+            with open(os.path.join(converted_dir, split, "labels", f"{image_id:012d}.txt"), "w") as f:
+                for annotation in annotations:
+                    category_id = int(annotation["category_id"])
+                    coco_box = COCOBox.from_lvis_box(
+                        lvis_box=LVISBox.from_array(annotation["bbox"]),
+                        image_w=img_w,
+                        image_h=img_h
+                    )
+                    f.write(
+                        f"{category_id} {coco_box.x_center} {coco_box.y_center} {coco_box.width} {coco_box.height}\n")
+
+            shutil.copy(
+                src=os.path.join(dataset_dir, "coco2017", "train2017", f"{image_id:012d}.jpg"),
+                dst=os.path.join(converted_dir, split, "images", f"{image_id:012d}.jpg")
+            )
+            return True
+
+        executor: ThreadPoolExecutor = ThreadPoolExecutor(max_workers=16)
+
+        tasks = []
+        for image_id, annotations in tqdm(annotation_by_image_id.items()):
+            tasks.append(executor.submit(convert, image_id=image_id, annotations=annotations))
+        with tqdm(total=len(tasks), ascii=' =') as pbar:
+            for idx, future in enumerate(concurrent.futures.as_completed(tasks)):
+                if future.result():
+                    pbar.update(idx)
+
+
+
+
+
+
+
+
+

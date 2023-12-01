@@ -1,7 +1,10 @@
+import json
+
 import pandas as pd
 import os
 from typing import List, Dict
 from tqdm.autonotebook import tqdm
+
 
 def load_open_image_metadata(open_image_dir: str, split: str):
     classes_mapping_df = pd.read_csv(
@@ -25,6 +28,15 @@ def load_open_image_metadata(open_image_dir: str, split: str):
     return classes_mapping, labels
 
 
+def load_lvis_metadata(lvis_dir: str):
+    lvis_metadata = json.load(open(os.path.join(lvis_dir, "lvis_v1_train.json")))
+    classes_mapping = {}
+    for category in tqdm(lvis_metadata["categories"]):
+        classes_mapping[category["id"]] = category["name"]
+
+    return classes_mapping, lvis_metadata["annotations"]
+
+
 def plot_classes(data_dirs: List[str], mapping_names: List[Dict[int, int]]):
     labels = {}
     for data_idx, data_dir in enumerate(data_dirs):
@@ -40,4 +52,3 @@ def plot_classes(data_dirs: List[str], mapping_names: List[Dict[int, int]]):
                         labels[label] = 0
 
     return labels
-

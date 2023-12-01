@@ -7,14 +7,14 @@ from rml.domain.inference_input import ImageInferenceInput
 
 
 model_loader = YOLOv8ModelLoader.from_pretrained(
-    model_path='rml/data/models/best_full_7.pt',
+    model_path='/Users/phamvy/Projects/source/local/object_detection/rml/data/models/best.pt',
     task=YOLOv8ModelLoader.DETECTION
     # model_path='best.pt'
     # model_path='rml/data/models/yolov8l-furniture.pt'
 )
 
 
-validation_data_dir = "/Users/phamvy/Projects/dataset/furniture/rever/valid"
+validation_data_dir = "/Users/phamvy/Projects/dataset/furniture/rever"
 names = {
     0: "balcony",
     1: "bathroom",
@@ -84,15 +84,15 @@ model_loader.validate(
 import os
 
 
-# detected = model_loader.inference(
-#     inference_input=ObjectDetectionInferenceInput.from_urls([
-#         "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-#         # "https://photo.rever.vn/v3/get/rvsjhnHF4MpI_coUBbMsSaA2aMRIlmHQYIkejYuULxVaYEC2eJ5ENVGR2qmWSLZ653RNqCnCay6ehAtRX00xhcuQ==/900x600/image.jpg",
-#         # "https://photo.rever.vn/v3/get/rvk1YDxeNaQRcrIc_tsCaOeGFqwI1vrf5J7CPEnbZdIGTDnNnA7CAAG+iW3AJuMbBaE76MkTuDuQQF7M35VYC0Iw==/900x600/image.jpg",
-#         # "https://photo.rever.vn/v3/get/rv3oj3knx5+QDK2tbxH+kshZeinoeWg6p1ugc5i9zyKon+6rpXp3Q6sP6u7+0VJHm+fo6vCH2PtzUdVMuIVeTq5g==/900x600/image.jpg"
-#     ]),
-#     save=True
-# )
+detected = model_loader.inference(
+    inference_input=ImageInferenceInput.from_urls([
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://photo.rever.vn/v3/get/rvsjhnHF4MpI_coUBbMsSaA2aMRIlmHQYIkejYuULxVaYEC2eJ5ENVGR2qmWSLZ653RNqCnCay6ehAtRX00xhcuQ==/900x600/image.jpg",
+        "https://photo.rever.vn/v3/get/rvk1YDxeNaQRcrIc_tsCaOeGFqwI1vrf5J7CPEnbZdIGTDnNnA7CAAG+iW3AJuMbBaE76MkTuDuQQF7M35VYC0Iw==/900x600/image.jpg",
+        "https://photo.rever.vn/v3/get/rv3oj3knx5+QDK2tbxH+kshZeinoeWg6p1ugc5i9zyKon+6rpXp3Q6sP6u7+0VJHm+fo6vCH2PtzUdVMuIVeTq5g==/900x600/image.jpg"
+    ]),
+    save=True
+)
 
 
 # start = datetime.now()
