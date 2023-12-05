@@ -115,7 +115,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="furniture_model",
+        default="furniture_model_2",
         # metavar="N",
         help="output directory",
     )
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--device",
         type=str,
-        default=None,
+        default="0, 1",
         # metavar="N",
         help="using metrics",
     )
