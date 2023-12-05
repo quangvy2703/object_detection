@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_data_config_paths",
         type=str,
-        default="rml/configs/object_detection/rever_furniture.yaml, rml/configs/object_detection/lvis_furniture.yaml",
+        default="rml/configs/object_detection/rever_furniture.yaml, rml/configs/object_detection/open_image_v7_furniture.yaml, rml/configs/object_detection/lvis_furniture.yaml",
         # metavar="N",
         help="training datasets configs",
     )
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dirs",
         type=str,
-        default="/Users/phamvy/Projects/dataset/furniture/rever, /Users/phamvy/Projects/dataset/furniture/lvis",
+        default="/kaggle/input/furniture/furniture/rever, /kaggle/input/furniture/furniture/open_images, /kaggle/input/furniture/furniture/lvis",
         # metavar="N",
         help="data directory",
     )
