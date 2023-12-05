@@ -107,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dirs",
         type=str,
-        default="/kaggle/input/furniture/furniture/rever, /kaggle/input/furniture/furniture/open_images, /kaggle/input/furniture/lvis/lvis",
+        default="/kaggle/input/furniture/furniture/furniture/rever, /kaggle/input/furniture/furniture/furniture/open_images, /kaggle/input/furniture/lvis/lvis",
         # metavar="N",
         help="data directory",
     )
