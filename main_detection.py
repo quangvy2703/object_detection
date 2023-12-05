@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default="yolov8n.pt",
+        default="yolov8l-oiv7.pt",
         # metavar="N",
         help="pretrained model path",
     )
