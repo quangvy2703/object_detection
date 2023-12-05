@@ -17,7 +17,7 @@ def main(args):
     args.training_data_config_paths = [item.strip() for item in args.training_data_config_paths.split(delimiter)]
     args.data_dirs = [item.strip() for item in args.data_dirs.split(delimiter)]
     args.metrics = [item.strip() for item in args.metrics.split(delimiter)]
-    args.device = [int(item.strip()) for item in args.device.split(delimiter)]
+    args.device = [int(item.strip()) for item in args.device.split(delimiter)] if args.device else "cpu"
     YOLOv8ModelLoader.update_data_config_file(
         data_config_files=args.training_data_config_paths,
         data_dirs=args.data_dirs
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pretrained_path",
         type=str,
-        default="yolov8l.pt",
+        default="yolov8n.pt",
         # metavar="N",
         help="pretrained model path",
     )
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_data_config_paths",
         type=str,
-        default="rml/configs/object_detection/rever_furniture.yaml,rml/configs/object_detection/open_image_v7_furniture.yaml",
+        default="rml/configs/object_detection/rever_furniture.yaml, rml/configs/object_detection/lvis_furniture.yaml",
         # metavar="N",
         help="training datasets configs",
     )
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dirs",
         type=str,
-        default="/kaggle/input/furniture/furniture/rever,/kaggle/input/furniture/furniture/open_images",
+        default="/Users/phamvy/Projects/dataset/furniture/rever, /Users/phamvy/Projects/dataset/furniture/lvis",
         # metavar="N",
         help="data directory",
     )
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--metrics",
         type=str,
-        default="precisionphamquangvyrecallphamquangvyaverage_precision",
+        default="precision, recall, average_precision",
         # metavar="N",
         help="using metrics",
     )
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--device",
         type=str,
-        default="0, 1",
+        default=None,
         # metavar="N",
         help="using metrics",
     )

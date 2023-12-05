@@ -95,6 +95,7 @@ def verify_image_label(args):
     try:
         im = Image.open(im_file)
     except:
+        raise "Image not found"
         return [None, None, None, None, None, nm, nf, ne, nc, msg]
     im.verify()  # PIL verify
     shape = exif_size(im)  # image size
@@ -124,14 +125,10 @@ def verify_image_label(args):
                             lb_holder.append(copy.deepcopy(_lb))
                             lb_holder[-1][0] = int(label_id_mapping[data_dir][int(_lb[0])])
                     except Exception as e:
-                        print(lb_file)
-                        print(label_id_mapping)
-                        print(lb)
-                        print(data_dir)
-                        print(_lb, int(_lb[0]))
                         raise e
                 if len(lb_holder) == 0:
                     return [None, None, None, None, None, nm, nf, ne, nc, msg]
+
                 lb = lb_holder
 
             if any(len(x) > 6 for x in lb) and (not keypoint):  # is segment
@@ -147,6 +144,7 @@ def verify_image_label(args):
                 segments = [np.array(x[1:], dtype=np.float32).reshape(-1, 2) for x in lb]  # (cls, xy1...)
                 # segments = [np.array(x[1:], dtype=np.float32).reshape(-1, 2) for x in lb if label_id_mapping[int(x[0])] != -1]  # (cls, xy1...)
                 lb = np.concatenate((classes.reshape(-1, 1), segments2boxes(segments)), 1)  # (cls, xywh)
+
             lb = np.array(lb, dtype=np.float32)
         nl = len(lb)
         if nl:

@@ -71,7 +71,9 @@ class BaseDataset(Dataset):
         self.fraction = fraction
         self.im_files = []
         for img_path in self.img_paths:
+            # if img_path is not None:
             self.im_files.extend(self.get_img_files(img_path))
+
         self.labels = self.get_labels()
         self.update_labels(include_class=classes)  # single_cls and include_class
         self.ni = len(self.labels)  # number of images

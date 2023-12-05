@@ -285,7 +285,7 @@ class BaseTrainer:
         # Dataloaders
         batch_size = self.batch_size // max(world_size, 1)
         self.train_loader = self.get_dataloader(self.trainset, batch_size=batch_size, rank=RANK, mode='train')
-        if RANK in (-1, 0):
+        if RANK in (-1, 0) and self.testset:
             self.test_loader = self.get_dataloader(self.testset, batch_size=batch_size * 2, rank=-1, mode='val')
             self.validator = self.get_validator()
             metric_keys = self.validator.metrics.keys + self.label_loss_items(prefix='val')
