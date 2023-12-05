@@ -95,7 +95,6 @@ def verify_image_label(args):
     try:
         im = Image.open(im_file)
     except:
-        raise "Image not found"
         return [None, None, None, None, None, nm, nf, ne, nc, msg]
     im.verify()  # PIL verify
     shape = exif_size(im)  # image size
